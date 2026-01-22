@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任务Boss战</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Nunito', 'PingFang SC', sans-serif;
+            background: #F6EAC9;
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 40px;
+            color: #5D4037;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255,251,240,0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(244,185,66,0.1) 0%, transparent 50%);
+            overflow-y: auto;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .timer-display {
+            background: #FFFBF0;
+            border: 3px solid #5D4037;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            padding: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 6px 6px 0px rgba(93, 64, 55, 0.2);
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .timer-display.active {
+            background: linear-gradient(135deg, #FFE5B4 0%, #F4B942 100%);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .current-task {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #5D4037;
+            text-shadow: 2px 2px 0px rgba(246, 234, 201, 0.5);
+        }
+        
+        .countdown {
+            font-size: 56px;
+            font-weight: 700;
+            margin: 20px 0;
+            font-variant-numeric: tabular-nums;
+            color: #E57373;
+            text-shadow: 3px 3px 0px rgba(93, 64, 55, 0.1);
+        }
+        
+        .task-progress {
+            font-size: 16px;
+            font-weight: 700;
+            color: #5D4037;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        /* 音效设置区域 */
+        .sound-controls {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .sound-controls:hover {
+            opacity: 1;
+        }
+
+        .btn-sound-small {
+            padding: 4px 8px;
+            border: 2px solid #5D4037;
+            border-radius: 8px;
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            color: #5D4037;
+            font-weight: 700;
+        }
+
+        .btn-sound-small:hover {
+            background: #AECB95;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: 3px solid #5D4037;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 4px 4px 0px rgba(93, 64, 55, 0.3);
+            color: #5D4037;
+        }
+        
+        button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px rgba(93, 64, 55, 0.3);
+        }
+        
+        .btn-stop {
+            background: #E57373;
+            color: white;
+        }
+        
+        .btn-pause {
+            background: #F4B942;
+        }
+        
+        .tasks {
+            background: #FFFBF0;
+            border: 3px solid #5D4037;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 6px 6px 0px rgba(93, 64, 55, 0.2);
+            min-height: 200px;
+            margin-bottom: 20px;
+        }
+        
+        .tier {
+            margin-bottom: 25px;
+            min-height: 50px; 
+        }
+        
+        .tier-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        .tier-title {
+            font-size: 16px;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 12px;
+            display: inline-block;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .add-task-btn {
+            background: #FFFBF0;
+            border: 2px solid #5D4037;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+            color: #5D4037;
+            box-shadow: 2px 2px 0px rgba(93, 64, 55, 0.2);
+            transition: transform 0.1s;
+        }
+
+        .add-task-btn:active {
+            transform: scale(0.9);
+        }
+        
+        .tier-red .tier-title { 
+            background: #E57373; 
+            color: white;
+            border: 3px solid #5D4037;
+        }
+        .tier-orange .tier-title { 
+            background: #F4B942; 
+            border: 3px solid #5D4037;
+        }
+        .tier-blue .tier-title { 
+            background: #AECB95; 
+            border: 3px solid #5D4037;
+        }
+        .tier-gray .tier-title { 
+            background: #D7CCC8; 
+            border: 3px solid #5D4037;
+        }
+        
+        .task-item {
+            background: #FFFBF0;
+            border: 3px solid #5D4037;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: grab;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s, opacity 0.2s;
+            box-shadow: 4px 4px 0px rgba(93, 64, 55, 0.2);
+            position: relative;
+        }
+
+        .task-item:active {
+            cursor: grabbing;
+        }
+
+        .task-item.dragging {
+            opacity: 0.5;
+            background: #FFF8E1;
+            transform: scale(0.98);
+            border: 3px dashed #5D4037;
+        }
+        
+        .task-item:hover {
+            background: #FFF8E1;
+            transform: translateY(-2px);
+            box-shadow: 6px 6px 0px rgba(93, 64, 55, 0.2);
+        }
+        
+        .task-item.completed {
+            opacity: 0.5;
+            cursor: default;
+            filter: grayscale(0.5);
+        }
+        
+        .task-name {
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .edit-btn {
+            background: #AECB95;
+            border: 2px solid #5D4037;
+            border-radius: 8px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: 2px 2px 0px rgba(93, 64, 55, 0.2);
+        }
+        
+        .edit-btn:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px rgba(93, 64, 55, 0.2);
+        }
+        
+        .hp-bar-container {
+            background: #E0D6BC;
+            height: 16px;
+            border-radius: 8px;
+            border: 2px solid #5D4037;
+            overflow: hidden;
+            margin-bottom: 6px;
+            position: relative;
+        }
+        
+        .hp-bar-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+            background: linear-gradient(90deg, #E57373 0%, #AECB95 100%);
+            background-image: 
+                linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent),
+                linear-gradient(90deg, #E57373 0%, #AECB95 100%);
+            background-size: 1rem 1rem, 100% 100%;
+            position: relative;
+        }
+        
+        .hp-bar-fill.low {
+            background: linear-gradient(90deg, #E57373 0%, #E57373 100%);
+            background-image: 
+                linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent),
+                linear-gradient(90deg, #E57373 0%, #E57373 100%);
+            background-size: 1rem 1rem, 100% 100%;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+        
+        .task-hours {
+            font-size: 12px;
+            color: #8D6E63;
+            font-weight: 700;
+        }
+        
+        .rest-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(93, 64, 55, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .rest-modal.show {
+            display: flex;
+        }
+        
+        .rest-content {
+            background: #FFFBF0;
+            padding: 40px;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            border: 4px solid #5D4037;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 8px 8px 0px rgba(93, 64, 55, 0.3);
+            animation: bounceIn 0.5s;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+        
+        .rest-content h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #E57373;
+            text-shadow: 2px 2px 0px rgba(246, 234, 201, 0.5);
+        }
+        
+        .rest-content p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #5D4037;
+            line-height: 1.6;
+        }
+        
+        .btn-continue {
+            background: #AECB95;
+            color: #5D4037;
+            padding: 15px 40px;
+            font-size: 18px;
+            border: 3px solid #5D4037;
+            box-shadow: 4px 4px 0px rgba(93, 64, 55, 0.3);
+        }
+        
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(93, 64, 55, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+        
+        .edit-modal.show {
+            display: flex;
+        }
+        
+        .edit-content {
+            background: #FFFBF0;
+            padding: 30px;
+            border-radius: 20px;
+            border: 3px solid #5D4037;
+            box-shadow: 6px 6px 0px rgba(93, 64, 55, 0.3);
+            width: 320px;
+        }
+        
+        .edit-content h3 {
+            margin-bottom: 20px;
+            color: #5D4037;
+        }
+
+        .edit-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .edit-content input {
+            width: 100%;
+            padding: 12px;
+            border: 3px solid #5D4037;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Nunito', sans-serif;
+            margin-bottom: 15px;
+            background: white;
+        }
+        
+        .edit-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-save {
+            background: #AECB95;
+            flex: 1;
+        }
+        
+        .btn-cancel {
+            background: #D7CCC8;
+            flex: 1;
+        }
+        
+        .btn-delete {
+            background: #E57373;
+            color: white;
+            flex: 0.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tier-collapse-icon {
+            display: inline-block;
+            transition: transform 0.3s;
+            margin-right: 5px;
+        }
+        
+        .tier-header.collapsed .tier-collapse-icon {
+            transform: rotate(-90deg);
+        }
+        
+        .tier-items {
+            min-height: 10px; /* target area for empty lists */
+            transition: max-height 0.3s ease;
+        }
+        
+        .tier-items.collapsed {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="timer-display" id="timerDisplay">
+            <div class="current-task" id="currentTaskName">🎯 选择一个Boss开始战斗</div>
+            <div class="countdown" id="countdown">00:00:00</div>
+            <div class="task-progress" id="taskProgress">-</div>
+            
+            <div class="controls" id="controls" style="display:none;">
+                <button class="btn-pause" id="pauseBtn">⏸ 暂停</button>
+                <button class="btn-stop" id="stopBtn">⏹ 停止</button>
+            </div>
+
+            <!-- 音效设置面板，鹤见君的需求 -->
+            <div class="sound-controls">
+                <button class="btn-sound-small" onclick="testAlarm()" title="测试当前闹铃声音">🔔 测试音效</button>
+                <button class="btn-sound-small" onclick="document.getElementById('soundUpload').click()" title="上传自定义MP3/WAV">📂 设定本地声音</button>
+                <button class="btn-sound-small" onclick="resetSound()" title="恢复默认哔哔声">↩️ 默认</button>
+                <input type="file" id="soundUpload" accept="audio/*" style="display:none" onchange="handleSoundUpload(this)">
+            </div>
+        </div>
+        
+        <div class="tasks" id="tasksList"></div>
+    </div>
+    
+    <div class="rest-modal" id="restModal">
+        <div class="rest-content">
+            <h2>🐱 喵~</h2>
+            <p>鹤见君，你已经专注了很久啦！<br>休息一下，喝口水吧~ ☕</p>
+            <button class="btn-continue" onclick="closeRestModal()">知道了！</button>
+        </div>
+    </div>
+    
+    <div class="edit-modal" id="editModal">
+        <div class="edit-content">
+            <h3>✏️ 修改Boss属性</h3>
+            
+            <label class="edit-label">任务名称</label>
+            <input type="text" id="editNameInput" placeholder="输入任务名称">
+            
+            <label class="edit-label">总时长 (小时)</label>
+            <input type="number" id="editTimeInput" min="0" step="0.5" placeholder="输入新的总时长">
+            
+            <div class="edit-buttons">
+                <button class="btn-save" onclick="saveEdit()">保存</button>
+                <button class="btn-cancel" onclick="closeEditModal()">取消</button>
+                <button class="btn-delete" onclick="deleteTask()" title="删除">🗑️</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 默认数据
+        const defaultTasks = [
+            {tier: 'red', tierName: '🔴 第一梯队：紧急重要', items: [
+                {name: '备团：演绎本我润色', total: 8},
+                {name: '立绘：NPC/角色工业化产出', total: 40}
+            ]},
+            {tier: 'orange', tierName: '🟠 第二梯队：紧急/固定时间', items: [
+                {name: '外出：市中心医院副本', total: 10},
+                {name: '洗衣服', total: 2}
+            ]},
+            {tier: 'blue', tierName: '🔵 第三梯队：重要不紧急', items: [
+                {name: '整理电脑', total: 8},
+                {name: '视频文案提取与归档', total: 10},
+                {name: '收房间', total: 4}
+            ]},
+            {tier: 'gray', tierName: '⚪ 第四梯队：项目库', collapsed: true, items: [
+                {name: '小丑牌Demo', total: 200},
+                {name: '生活手游数值化正反馈设计师', total: 100},
+                {name: '雾箱解谜AVG游戏', total: 80},
+                {name: '渡园之+林中小屋replay', total: 60},
+                {name: '星露谷AI电子室友Demo', total: 50},
+                {name: '跑团问卷名片', total: 50},
+                {name: '雾都孤儿 DOL 叙事插件', total: 40},
+                {name: '明镜replay', total: 30},
+                {name: '文豪野犬AVG开发', total: 20},
+                {name: '共同设计时间协同Demo', total: 20},
+                {name: '扣子Replay制作软件', total: 10},
+                {name: '营销工具设计', total: 10},
+                {name: '信息差商业发现工具', total: 10},
+                {name: '亮光同人图', total: 10},
+                {name: '审美导师', total: 10},
+                {name: 'MCP，AI工具整理', total: 8},
+                {name: 'Ob笔记 整理prompt', total: 4},
+                {name: '谷歌AI账号整理', total: 2}
+            ]}
+        ];
+
+        let tasks = [];
+        let timer = null;
+        let isPaused = false;
+        let remainingSeconds = 0;
+        let currentTask = null;
+        let sessionSeconds = 0;
+        let editingTask = null;
+        let editingTaskCoords = null; 
+        
+        // 默认的“复古”提示音
+        const DEFAULT_AUDIO_SRC = 'data:audio/wav;base64,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';
+        
+        // 动态加载音频
+        let audio = new Audio();
+        
+        function initAudio() {
+            const savedAudio = localStorage.getItem('customAlarmSound');
+            if (savedAudio) {
+                audio.src = savedAudio;
+            } else {
+                audio.src = DEFAULT_AUDIO_SRC;
+            }
+        }
+
+        function initData() {
+            const savedData = localStorage.getItem('taskBoss_v2_data');
+            if (savedData) {
+                try {
+                    tasks = JSON.parse(savedData);
+                } catch(e) {
+                    tasks = loadDefaults();
+                }
+            } else {
+                tasks = loadDefaults();
+            }
+            saveProgress();
+            initAudio(); // 初始化音频
+        }
+
+        function loadDefaults() {
+            return JSON.parse(JSON.stringify(defaultTasks)).map(tier => {
+                tier.items = tier.items.map(task => {
+                    return {
+                        id: 'task_' + Math.random().toString(36).substr(2, 9),
+                        name: task.name,
+                        total: task.total,
+                        remaining: task.total
+                    };
+                });
+                return tier;
+            });
+        }
+
+        function saveProgress() {
+            localStorage.setItem('taskBoss_v2_data', JSON.stringify(tasks));
+        }
+
+        // --- 音效相关逻辑 ---
+        
+        function testAlarm() {
+            // 鹤见君，记得不要在图书馆里点这个哦
+            audio.currentTime = 0;
+            audio.play().catch(e => alert("播放失败了，可能是浏览器权限问题，试着点一下页面其他地方再试？"));
+        }
+
+        function handleSoundUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // 限制大小，不然LocalStorage会炸掉，你的浏览器也会恨你的
+            if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                alert("太大了！鹤见君，音频文件请控制在2MB以内。我们不需要一整首交响乐来做闹铃。");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const result = e.target.result;
+                try {
+                    localStorage.setItem('customAlarmSound', result);
+                    audio.src = result;
+                    alert("设置成功！点击“测试音效”听听看吧。");
+                } catch (e) {
+                    alert("存储空间不足，看来你的Local Storage塞满了东西呢。");
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetSound() {
+            if(confirm("确定要换回默认的哔哔声吗？")) {
+                localStorage.removeItem('customAlarmSound');
+                audio.src = DEFAULT_AUDIO_SRC;
+                alert("已恢复默认设置。");
+            }
+        }
+
+        // --- 渲染逻辑 (保持原样) ---
+
+        function renderTasks() {
+            const container = document.getElementById('tasksList');
+            container.innerHTML = '';
+            
+            tasks.forEach((tier, tierIndex) => {
+                const tierDiv = document.createElement('div');
+                tierDiv.className = `tier tier-${tier.tier}`;
+                
+                const header = document.createElement('div');
+                header.className = 'tier-header';
+                if (tier.collapsed) header.classList.add('collapsed');
+                
+                const title = document.createElement('div');
+                title.className = 'tier-title';
+                title.innerHTML = `<span class="tier-collapse-icon">▼</span> ${tier.tierName}`;
+                title.onclick = () => toggleTier(tier, tierIndex);
+                
+                const addBtn = document.createElement('div');
+                addBtn.className = 'add-task-btn';
+                addBtn.textContent = '+';
+                addBtn.title = '添加新任务';
+                addBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    addNewTask(tierIndex);
+                };
+
+                header.appendChild(title);
+                header.appendChild(addBtn);
+                tierDiv.appendChild(header);
+                
+                const itemsContainer = document.createElement('div');
+                itemsContainer.className = 'tier-items';
+                itemsContainer.dataset.tierIndex = tierIndex; 
+                if (tier.collapsed) itemsContainer.classList.add('collapsed');
+                
+                itemsContainer.addEventListener('dragover', handleDragOver);
+                itemsContainer.addEventListener('drop', (e) => handleDrop(e, tierIndex));
+                itemsContainer.addEventListener('dragleave', handleDragLeave);
+
+                tier.items.forEach((task, taskIndex) => {
+                    const taskDiv = document.createElement('div');
+                    taskDiv.className = 'task-item';
+                    taskDiv.draggable = true;
+                    if (task.remaining <= 0) {
+                        taskDiv.classList.add('completed');
+                    }
+                    
+                    taskDiv.addEventListener('dragstart', (e) => handleDragStart(e, tierIndex, taskIndex));
+                    taskDiv.addEventListener('dragend', handleDragEnd);
+                    
+                    const hpPercent = (task.remaining / task.total) * 100;
+                    
+                    taskDiv.innerHTML = `
+                        <div class="task-name">
+                            <span>${task.name}</span>
+                            <button class="edit-btn" onclick="event.stopPropagation(); openEditModal(${tierIndex}, ${taskIndex})">✏️</button>
+                        </div>
+                        <div class="hp-bar-container">
+                            <div class="hp-bar-fill ${hpPercent < 30 ? 'low' : ''}" style="width: ${hpPercent}%"></div>
+                        </div>
+                        <div class="task-hours">❤️ 剩余HP: ${task.remaining.toFixed(1)}h / ${task.total}h</div>
+                    `;
+                    
+                    if (task.remaining > 0) {
+                        taskDiv.onclick = (e) => {
+                            startTask(task);
+                        };
+                    }
+                    
+                    itemsContainer.appendChild(taskDiv);
+                });
+                
+                tierDiv.appendChild(itemsContainer);
+                container.appendChild(tierDiv);
+            });
+        }
+
+        function toggleTier(tier, index) {
+            tier.collapsed = !tier.collapsed;
+            saveProgress();
+            renderTasks();
+        }
+
+        // --- DnD Logic ---
+
+        let draggedItem = null;
+
+        function handleDragStart(e, tierIndex, taskIndex) {
+            draggedItem = { tierIndex, taskIndex };
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', JSON.stringify(draggedItem));
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+            draggedItem = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault(); 
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDragLeave(e) {
+        }
+
+        function handleDrop(e, targetTierIndex) {
+            e.stopPropagation(); 
+            
+            if (!draggedItem) return false;
+
+            const target = e.target.closest('.task-item');
+            const container = e.target.closest('.tier-items');
+            
+            let targetTaskIndex;
+            
+            if (target) {
+                const rect = target.getBoundingClientRect();
+                const midY = rect.top + rect.height / 2;
+                const siblings = Array.from(container.children);
+                const hoverIndex = siblings.indexOf(target);
+                
+                if (e.clientY < midY) {
+                    targetTaskIndex = hoverIndex;
+                } else {
+                    targetTaskIndex = hoverIndex + 1;
+                }
+            } else {
+                targetTaskIndex = tasks[targetTierIndex].items.length;
+            }
+
+            moveTask(draggedItem.tierIndex, draggedItem.taskIndex, targetTierIndex, targetTaskIndex);
+            
+            return false;
+        }
+
+        function moveTask(fromTier, fromIdx, toTier, toIdx) {
+            const taskToMove = tasks[fromTier].items[fromIdx];
+            tasks[fromTier].items.splice(fromIdx, 1);
+            
+            if (fromTier === toTier && toIdx > fromIdx) {
+                toIdx--;
+            }
+            
+            tasks[toTier].items.splice(toIdx, 0, taskToMove);
+            
+            saveProgress();
+            renderTasks();
+        }
+
+        // --- Editing Logic ---
+
+        function openEditModal(tierIndex, taskIndex) {
+            editingTaskCoords = { tierIndex, taskIndex };
+            editingTask = tasks[tierIndex].items[taskIndex];
+            
+            document.getElementById('editNameInput').value = editingTask.name;
+            document.getElementById('editTimeInput').value = editingTask.total;
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('show');
+            editingTask = null;
+            editingTaskCoords = null;
+        }
+
+        function saveEdit() {
+            const newName = document.getElementById('editNameInput').value.trim();
+            const newTotal = parseFloat(document.getElementById('editTimeInput').value);
+            
+            if (newName && newTotal && newTotal > 0 && editingTask) {
+                const oldTotal = editingTask.total;
+                const workedHours = oldTotal - editingTask.remaining;
+                
+                editingTask.name = newName;
+                editingTask.total = newTotal;
+                editingTask.remaining = Math.max(0, newTotal - workedHours);
+                
+                saveProgress();
+                renderTasks();
+            }
+            closeEditModal();
+        }
+        
+        function deleteTask() {
+            if (editingTaskCoords && confirm('鹤见君，确定要删除这个任务吗？一旦删除就无法恢复了哦。')) {
+                tasks[editingTaskCoords.tierIndex].items.splice(editingTaskCoords.taskIndex, 1);
+                saveProgress();
+                renderTasks();
+                closeEditModal();
+            }
+        }
+        
+        // --- Add New Task ---
+        
+        function addNewTask(tierIndex) {
+            const name = prompt("请输入新任务的名称：");
+            if (name) {
+                const totalStr = prompt("请输入总时长（小时）：", "2");
+                const total = parseFloat(totalStr);
+                
+                if (!isNaN(total) && total > 0) {
+                    const newTask = {
+                        id: 'task_' + Math.now + Math.random(),
+                        name: name,
+                        total: total,
+                        remaining: total
+                    };
+                    
+                    tasks[tierIndex].items.push(newTask);
+                    
+                    if(tasks[tierIndex].collapsed) {
+                        tasks[tierIndex].collapsed = false;
+                    }
+                    
+                    saveProgress();
+                    renderTasks();
+                } else {
+                    alert("时长格式不对哦，请输入数字。");
+                }
+            }
+        }
+
+        // --- Timer Logic ---
+
+        function startTask(task) {
+            if (timer) {
+                alert('请先停止当前任务');
+                return;
+            }
+            
+            currentTask = task;
+            const sessionTime = Math.min(task.remaining, 2);
+            remainingSeconds = sessionTime * 3600;
+            sessionSeconds = 0;
+            
+            document.getElementById('timerDisplay').classList.add('active');
+            document.getElementById('currentTaskName').textContent = '⚔️ ' + task.name;
+            document.getElementById('controls').style.display = 'flex';
+            updateDisplay();
+            
+            timer = setInterval(() => {
+                if (!isPaused) {
+                    remainingSeconds--;
+                    sessionSeconds++;
+                    updateDisplay();
+                    
+                    if (remainingSeconds <= 0) {
+                        completeSession();
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateDisplay() {
+            const h = Math.floor(remainingSeconds / 3600);
+            const m = Math.floor((remainingSeconds % 3600) / 60);
+            const s = Math.floor(remainingSeconds % 60);
+            
+            document.getElementById('countdown').textContent = 
+                `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            
+            if (currentTask) {
+                document.getElementById('taskProgress').textContent = 
+                    `❤️ Boss剩余HP: ${currentTask.remaining.toFixed(1)}h`;
+            }
+        }
+
+        function completeSession() {
+            clearInterval(timer);
+            timer = null;
+            
+            // Loop audio until user clicks close
+            audio.loop = true;
+            audio.play().catch(e => console.log('Audio play failed:', e));
+            
+            const hoursWorked = sessionSeconds / 3600;
+            if (currentTask) {
+                currentTask.remaining = Math.max(0, currentTask.remaining - hoursWorked);
+                saveProgress();
+            }
+            
+            document.getElementById('restModal').classList.add('show');
+            
+            resetTimer();
+            renderTasks();
+        }
+
+        function closeRestModal() {
+            document.getElementById('restModal').classList.remove('show');
+            // Stop loop and audio
+            audio.pause();
+            audio.currentTime = 0;
+            audio.loop = false;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            timer = null;
+            isPaused = false;
+            currentTask = null;
+            remainingSeconds = 0;
+            sessionSeconds = 0;
+            
+            document.getElementById('timerDisplay').classList.remove('active');
+            document.getElementById('currentTaskName').textContent = '🎯 选择一个Boss开始战斗';
+            document.getElementById('countdown').textContent = '00:00:00';
+            document.getElementById('taskProgress').textContent = '-';
+            document.getElementById('controls').style.display = 'none';
+        }
+
+        document.getElementById('pauseBtn').onclick = () => {
+            isPaused = !isPaused;
+            document.getElementById('pauseBtn').textContent = isPaused ? '▶️ 继续' : '⏸ 暂停';
+        };
+
+        document.getElementById('stopBtn').onclick = () => {
+            if (confirm('确定要停止吗？当前进度将会保存')) {
+                const hoursWorked = sessionSeconds / 3600;
+                if(currentTask) {
+                    currentTask.remaining = Math.max(0, currentTask.remaining - hoursWorked);
+                    saveProgress();
+                }
+                resetTimer();
+                renderTasks();
+            }
+        };
+
+        // Boot
+        initData();
+        renderTasks();
+
+    </script>
+</body>
+</html>
