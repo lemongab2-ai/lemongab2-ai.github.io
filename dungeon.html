@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无貌之神的演员 - 剧本</title>
+    <style>
+/* =========================================
+A Dark Room 风格 - 白底黑字版本
+========================================= */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: "Courier New", Courier, monospace;
+    background-color: #f7f7f7;
+    color: #2c2c2c;
+    min-height: 100vh;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* 副本标题栏 */
+.dungeon-header {
+    background: transparent;
+    border: 1px solid #333;
+    border-radius: 0;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.dungeon-title {
+    font-size: 1.8em;
+    color: #2c2c2c;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.dungeon-meta {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 15px;
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 10px;
+}
+
+/* SAN值显示 */
+.san-display {
+    margin-top: 15px;
+}
+
+.san-display > div:first-child {
+    font-size: 0.9em;
+    margin-bottom: 8px;
+    color: #2c2c2c;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.san-bar {
+    width: 100%;
+    height: 20px;
+    background: #e8e8e8;
+    border: 1px solid #333;
+    border-radius: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.san-fill {
+    height: 100%;
+    background-color: #333 !important;
+    background-image: none !important;
+    transition: width 0.5s ease;
+    border-radius: 0;
+}
+
+.san-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    line-height: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #2c2c2c;
+    text-shadow: none;
+}
+
+/* 通关条件显示 */
+.conditions-display {
+    margin-top: 15px;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 0;
+}
+
+.conditions-title {
+    font-size: 0.9em;
+    color: #2c2c2c;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.conditions-list {
+    font-size: 0.85em;
+    color: #555;
+}
+
+.condition-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    padding: 5px 0;
+    border-bottom: 1px dotted #ddd;
+}
+
+.condition-item.met {
+    color: #333;
+    font-weight: bold;
+}
+
+.condition-item.not-met {
+    color: #999;
+}
+
+/* 故事文本区域 */
+.story-container {
+    background: #fff;
+    border: 1px solid #333;
+    border-radius: 0;
+    padding: 30px;
+    min-height: 200px;
+    margin-bottom: 20px;
+}
+
+.story-line {
+    font-size: 1em;
+    line-height: 1.8;
+    margin-bottom: 15px;
+    opacity: 0;
+    animation: fadeIn 0.8s ease forwards;
+    color: #2c2c2c;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+.story-line.story-npc_lover {
+    color: #666;
+    font-style: italic;
+    padding-left: 20px;
+    border-left: 2px solid #999;
+}
+
+.story-line.story-ending {
+    font-weight: bold;
+    text-align: center;
+}
+
+.story-line.story-epilogue {
+    color: #666;
+    font-style: italic;
+}
+
+/* 进度提示 */
+.progress-hint {
+    text-align: center;
+    color: #999;
+    font-size: 0.9em;
+    margin: 20px 0;
+}
+
+/* 按钮组 */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 10px 25px;
+    border: 1px solid #333;
+    border-radius: 0;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: #fff;
+    color: #2c2c2c;
+}
+
+.btn-primary {
+    background: #fff;
+    color: #2c2c2c;
+    border: 1px solid #333;
+}
+
+.btn-primary:hover {
+    background: #333;
+    color: #fff;
+}
+
+.btn-danger {
+    background: #fff;
+    color: #2c2c2c;
+    border: 1px solid #333;
+}
+
+.btn-danger:hover {
+    background: #333;
+    color: #fff;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f0f0f0;
+    color: #999;
+}
+
+/* 结局面板 */
+.ending-panel {
+    display: none;
+    background: #fff;
+    border: 2px solid #333;
+    border-radius: 0;
+    padding: 30px;
+    text-align: center;
+}
+
+.ending-panel.active {
+    display: block;
+}
+
+.ending-title {
+    font-size: 1.8em;
+    color: #2c2c2c;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.memento-display {
+    background: #f7f7f7;
+    border: 1px solid #333;
+    border-radius: 0;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.memento-name {
+    font-size: 1.3em;
+    color: #2c2c2c;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.memento-effect {
+    color: #555;
+    font-size: 0.9em;
+}
+
+/* 技能区域 */
+.skills-summary {
+    background: transparent;
+    border: 1px solid #333;
+    border-radius: 0;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.skills-title {
+    font-size: 1em;
+    color: #2c2c2c;
+    margin-bottom: 15px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 10px;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.skill-item {
+    background: #fff;
+    border: 1px solid #333;
+    border-radius: 0;
+    padding: 10px;
+    text-align: center;
+}
+
+.skill-name {
+    font-size: 0.85em;
+    color: #2c2c2c;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.skill-progress-bar {
+    width: 100%;
+    height: 4px;
+    background: #e8e8e8;
+    border: 1px solid #333;
+    border-radius: 0;
+    overflow: hidden;
+    margin: 6px 0;
+}
+
+.skill-progress-fill {
+    height: 100%;
+    background-color: #333 !important;
+    background-image: none !important;
+    transition: width 0.3s ease;
+}
+
+.skill-exp {
+    font-size: 0.7em;
+    color: #999;
+    margin-top: 4px;
+}
+
+.skill-level {
+    font-size: 0.9em;
+    color: #2c2c2c;
+    font-weight: normal;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 速度控制按钮 */
+.speed-controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 5px;
+    background: #f7f7f7;
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 0;
+}
+
+.speed-btn {
+    background: #fff;
+    color: #2c2c2c;
+    border: 1px solid #333;
+    padding: 8px 15px;
+    border-radius: 0;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+    min-width: 60px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.speed-btn.active {
+    background: #333 !important;
+    border-color: #333 !important;
+    color: #fff !important;
+    font-weight: bold;
+}
+
+.speed-btn:hover {
+    background: #e8e8e8;
+    border-color: #333;
+}
+
+.speed-btn.active:hover {
+    background: #333 !important;
+}
+
+@media (max-width: 768px) {
+    .dungeon-title {
+        font-size: 1.3em;
+    }
+
+    .skills-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    .container {
+        padding: 10px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="speed-controls">
+            <button class="speed-btn active" id="speed-1x" onclick="setGameSpeed(1)">×1</button>
+            <button class="speed-btn" id="speed-5x" onclick="setGameSpeed(5)">×5</button>
+            <button class="speed-btn" id="speed-10x" onclick="setGameSpeed(10)">×10</button>
+        </div>
+
+        <div class="dungeon-header">
+            <div class="dungeon-title" id="dungeonTitle">加载中...</div>
+            <div class="dungeon-meta">
+                <span id="dungeonSource">---</span> |
+                难度: <span id="dungeonDifficulty">---</span>
+            </div>
+
+            <div class="san-display">
+                <div>精神状态 (SAN)</div>
+                <div class="san-bar">
+                    <div class="san-fill" id="sanFill" style="width: 80%;"></div>
+                    <div class="san-text" id="sanText">80 / 100</div>
+                </div>
+            </div>
+
+            <div class="conditions-display">
+                <div class="conditions-title">📋 通关条件</div>
+                <div class="conditions-list" id="conditionsList"></div>
+            </div>
+        </div>
+
+        <div class="skills-summary hidden" id="skillsSummary">
+            <div class="skills-title">⚔️ 当前技能等级</div>
+            <div class="skills-grid" id="skillsGrid"></div>
+        </div>
+
+        <div class="story-container" id="storyContainer">
+            <div style="text-align: center; color: #7f8c8d;">
+                正在加载剧本...
+            </div>
+        </div>
+
+        <div class="progress-hint" id="progressHint">
+            剧本正在推进中... (每3秒一句)
+        </div>
+
+        <div class="action-buttons" id="actionButtons">
+            <button class="btn btn-danger" onclick="confirmExit()">中途退出（放弃进度）</button>
+            <button class="btn btn-primary hidden" id="completeBtn" onclick="completeDungeon()">✓ 剧本完成 - 返回后台</button>
+        </div>
+
+        <div class="ending-panel" id="endingPanel">
+            <div class="ending-title">【剧目落幕】</div>
+            <div class="memento-display">
+                <div class="memento-name" id="mementoName">---</div>
+                <div class="memento-effect" id="mementoEffect">---</div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="returnToBackend()">返回后台</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/shared.js"></script>
+	
+	<script>
+    class StoryParser {
+        constructor(mdContent) {
+            this.md = mdContent;
+            this.parsed = this.parse();
+        }
+
+        parse() {
+            const sections = {
+                opening: [],
+                branch3: [],
+                loop2: {
+                    route1: [],
+                    route2: []
+                },
+                npcLover: [],
+                ending: [],
+                epilogue: []
+            };
+
+            // 【OPENING】开局（固定）
+            const openingMatch = this.md.match(/【OPENING】\n([\s\S]*?)(?=#### 【BRANCH_3】|### 【BRANCH_3】|【BRANCH_3】|$)/i);
+            if (openingMatch) {
+                const text = openingMatch[1].trim();
+                sections.opening = text.split('\n').filter(l => l.trim() && !l.startsWith('#'));
+            }
+
+            // 【BRANCH_3】随机发展三选一（分支A/B/C）
+            const branch3Match = this.md.match(/【BRANCH_3】[^]*?随机三选一\n([\s\S]*?)(?=#### 【LOOP_2】|### 【LOOP_2】|【LOOP_2】|$)/i);
+            if (branch3Match) {
+                const branches = [];
+                const aMatch = branch3Match[1].match(/\*\*分支A[：:]\*\*([\s\S]*?)(?=\*\*分支B|$)/);
+                const bMatch = branch3Match[1].match(/\*\*分支B[：:]\*\*([\s\S]*?)(?=\*\*分支C|$)/);
+                const cMatch = branch3Match[1].match(/\*\*分支C[：:]\*\*([\s\S]*?)(?=#### 【|### 【|【|$)/);
+                if (aMatch) branches.push(aMatch[1].trim());
+                if (bMatch) branches.push(bMatch[1].trim());
+                if (cMatch) branches.push(cMatch[1].trim());
+                sections.branch3 = branches;
+            }
+
+            // 【LOOP_2】可循环二选一
+            const loop2Match = this.md.match(/【LOOP_2】[^]*?可循环路线\n([\s\S]*?)(?=#### 【ENDING】|### 【ENDING】|【ENDING】|$)/i);
+            if (loop2Match) {
+                const loopContent = loop2Match[1];
+
+                const route1Match = loopContent.match(/🔄\s*路线1[^]*?：([\s\S]*?)(?=🔄\s*路线2|【NPC_LOVER|$)/);
+                if (route1Match) {
+                    sections.loop2.route1 = this.extractLoopLines(route1Match[1]);
+                }
+
+                const route2Match = loopContent.match(/🔄\s*路线2[^]*?：([\s\S]*?)(?=【NPC_LOVER|#### 【|### 【|$)/);
+                if (route2Match) {
+                    sections.loop2.route2 = this.extractLoopLines(route2Match[1]);
+                }
+
+                const npcMatches = loopContent.match(/【NPC_LOVER[^】]*】([\s\S]*?)(?=🔄|【NPC_|#### 【|### 【|$)/g);
+                if (npcMatches) {
+                    npcMatches.forEach(match => {
+                        const npcContent = match.replace(/【NPC_LOVER[^】]*】/, '').trim();
+                        const lines = npcContent.split('\n')
+                            .filter(l => l.trim().startsWith('-') || l.trim().startsWith('*'))
+                            .map(l => l.replace(/^[\s\-\*]+/, '').trim())
+                            .filter(l => l);
+                        sections.npcLover.push(...lines);
+                    });
+                }
+            }
+
+            // 【ENDING】尾声（随机选一）
+            const endingMatch = this.md.match(/【ENDING】[^]*?随机结局\n([\s\S]*?)(?=#### 【EPILOGUE】|### 【EPILOGUE】|【EPILOGUE】|$)/i);
+            if (endingMatch) {
+                const endings = [];
+                const aMatch = endingMatch[1].match(/\*\*结局A[：:]\*\*([\s\S]*?)(?=\*\*结局B|$)/);
+                const bMatch = endingMatch[1].match(/\*\*结局B[：:]\*\*([\s\S]*?)(?=\*\*结局C|$)/);
+                const cMatch = endingMatch[1].match(/\*\*结局C[：:]\*\*([\s\S]*?)(?=#### 【|### 【|【|$)/);
+                if (aMatch) endings.push(aMatch[1].trim());
+                if (bMatch) endings.push(bMatch[1].trim());
+                if (cMatch) endings.push(cMatch[1].trim());
+                sections.ending = endings;
+            }
+
+            // 【EPILOGUE】景物结尾（固定）
+            const epilogueMatch = this.md.match(/【EPILOGUE】\n([\s\S]*?)$/i);
+            if (epilogueMatch) {
+                const text = epilogueMatch[1].trim();
+                sections.epilogue = text.split('\n').filter(l => l.trim() && !l.startsWith('#'));
+            }
+
+            return sections;
+        }
+
+        extractLoopLines(text) {
+            const lines = [];
+            const content = text.split('循环文本池')[1] || text;
+            if (content) {
+                const matches = content.match(/^\s*\d+\.\s*(.+?)(?=\n\s*\d+\.|$)/gm);
+                if (matches) {
+                    matches.forEach(match => {
+                        const line = match.replace(/^\s*\d+\.\s*/, '').trim();
+                        if (line) lines.push(line);
+                    });
+                }
+            }
+            return lines;
+        }
+
+        getStoryFlow() {
+            const flow = [];
+
+            // 1. 开局（固定）
+            if (this.parsed.opening.length > 0) {
+                flow.push({ type: 'opening', lines: this.parsed.opening });
+            }
+
+            // 2. 随机分支三选一（播放一次）
+            if (this.parsed.branch3.length > 0) {
+                const branchIdx = Math.floor(Math.random() * Math.min(this.parsed.branch3.length, 3));
+                const selectedBranch = this.parsed.branch3[branchIdx];
+                const branchLines = selectedBranch.split('\n').filter(l => l.trim());
+                flow.push({ type: 'branch', lines: branchLines });
+            }
+
+            // 3. 循环池（核心）- 随机选择route1或route2
+            const selectedRoute = Math.random() < 0.5 ? 'route1' : 'route2';
+            const loopLines = this.parsed.loop2[selectedRoute];
+            
+            if (loopLines.length > 0) {
+                flow.push({ 
+                    type: 'loop', 
+                    pool: loopLines,  // 存储整个循环池
+                    npcPool: this.parsed.npcLover  // NPC台词池
+                });
+            }
+
+            // 4. 尾声（随机选一条）
+            if (this.parsed.ending.length > 0) {
+                const endingIdx = Math.floor(Math.random() * Math.min(this.parsed.ending.length, 3));
+                const endingLine = this.parsed.ending[endingIdx];
+                flow.push({ type: 'ending', line: endingLine });
+            }
+
+            // 5. 固定景物结尾
+            if (this.parsed.epilogue.length > 0) {
+                flow.push({ type: 'epilogue', lines: this.parsed.epilogue });
+            }
+
+            return flow;
+        }
+    }
+    </script>
+
+    <script>
+        let GAME_SPEED = 1;
+
+        function setGameSpeed(speed) {
+            GAME_SPEED = speed;
+            document.querySelectorAll('.speed-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`speed-${speed}x`).classList.add('active');
+            console.log(`游戏倍速已设置为 ×${speed}`);
+        }
+    </script>
+    
+    <script>
+        const SimpleEngine = {
+            gameLoopInterval: null,
+            skills: {},
+            initComplete: false,
+
+            init() {
+                console.log('🚀 简化引擎启动...');
+                this.loadSkillsFromShared();
+                this.startGameLoop();
+                this.initComplete = true;
+                console.log('✅ 简化引擎启动完成');
+            },
+
+            loadSkillsFromShared() {
+                const skillNames = ['侦查', '追踪', '战斗', '黑客', '情感', '专注', '交涉'];
+                skillNames.forEach(name => {
+                    this.skills[name] = {
+                        name: name,
+                        level: 1,
+                        experience: 0,
+                        gainPerSecond: Math.floor(Math.random() * 3) + 1
+                    };
+                });
+                console.log('📊 已加载技能:', Object.keys(this.skills));
+            },
+
+            startGameLoop() {
+                if (this.gameLoopInterval) {
+                    clearInterval(this.gameLoopInterval);
+                }
+                this.gameLoopInterval = setInterval(() => {
+                    this.update();
+                    this.render();
+                }, 1000);
+            },
+
+            update() {
+                // 如果暂停，不更新
+                if (typeof gameState !== 'undefined' && gameState.isPaused) return;
+                
+                for (const skillName in this.skills) {
+                    const skill = this.skills[skillName];
+                    skill.experience += skill.gainPerSecond * GAME_SPEED;
+                    this.checkLevelUp(skill);
+                }
+            },
+
+            checkLevelUp(skill) {
+                const requiredExp = skill.level * 100;
+                if (skill.experience >= requiredExp) {
+                    skill.level++;
+                    skill.experience -= requiredExp;
+                    console.log(`🎉 ${skill.name} 升级到 Lv.${skill.level}`);
+                }
+            },
+
+            render() {
+                updateSkillsUI();
+                checkClearConditions();
+            },
+
+            getSkillLevel(skillName) {
+                const skill = this.skills[skillName];
+                return skill ? skill.level : 1;
+            },
+
+            stop() {
+                if (this.gameLoopInterval) {
+                    clearInterval(this.gameLoopInterval);
+                    this.gameLoopInterval = null;
+                }
+                console.log('⏹️ 简化引擎已停止');
+            }
+        };
+    </script>
+
+    <script>
+        let gameState = {
+            currentDungeon: null,
+            currentLine: 0,
+            sanValue: 100,
+            sanMax: 100,
+            isEnded: false,
+            isPaused: false,            // 新增：暂停状态（由现实锚点控制）
+            isClearable: false,        // 是否满足通关条件（显示完成按钮）
+            shouldExitLoop: false,      // 是否满足循环退出条件（停止循环播放）
+            storyInterval: null,
+            checkConditionsInterval: null,
+            dungeonData: null,
+            storyFlow: null,
+            flowIndex: 0,
+            lineIndex: 0,
+            inLoopPhase: false,
+            loopCounter: 0
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 确保 SharedData 存在
+            if (typeof SharedData === 'undefined') {
+                 window.SharedData = { san: 100, completedDungeons: [], souvenirs: [], currentDungeon: '' };
+            }
+            if (typeof loadSharedData === 'function') loadSharedData();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const dungeonId = urlParams.get('dungeon');
+
+            if (!dungeonId) {
+                console.error('❌ 未提供副本ID');
+                // 这里为了演示，默认加载火星赌场，实际使用请取消注释下面的返回代码
+                // alert('未提供副本ID，返回后台...');
+                // window.location.href = 'index.html';
+                // return;
+                initGame("mars_casino"); 
+            } else {
+                 console.log('📖 进入副本:', dungeonId);
+                 initGame(dungeonId);
+            }
+        });
+
+        function initGame(dungeonId) {
+            gameState.currentDungeon = dungeonId;
+            gameState.sanValue = SharedData.san;
+
+            loadDungeonData(dungeonId);
+            SimpleEngine.init();
+
+            updateSanDisplay();
+            updateDungeonInfo(dungeonId);
+
+            document.getElementById('skillsSummary').classList.remove('hidden');
+
+            startStoryProgression();
+            startConditionsCheck();
+            
+            // 启动现实锚点信号监听
+            initRealityAnchorListener();
+        }
+        
+        // ==========================================
+        // 现实锚点信号监听系统
+        // ==========================================
+        
+        const SIGNAL_KEY = 'reality_anchor_signal';
+        let signalPollInterval = null;
+        let lastSignalTime = null;
+        
+        function initRealityAnchorListener() {
+            console.log('🎯 [副本] 启动现实锚点信号监听...');
+            
+            // 每秒检查信号
+            signalPollInterval = setInterval(pollRealitySignal, 1000);
+            
+            // 检查当前是否应该处于暂停状态
+            checkInitialPauseState();
+        }
+        
+        function pollRealitySignal() {
+            const signalData = localStorage.getItem(SIGNAL_KEY);
+            if (!signalData) return;
+            
+            try {
+                const packet = JSON.parse(signalData);
+                
+                // 避免重复处理
+                if (lastSignalTime === packet.timestamp) return;
+                lastSignalTime = packet.timestamp;
+                
+                console.log(`🎯 [副本收到信号] ${packet.type}`);
+                
+                switch(packet.type) {
+                    case 'ENTER_DUNGEON':
+                        // ENTER_DUNGEON信号由index.html处理跳转，副本页面不需要处理
+                        break;
+                    case 'LEAVE_DUNGEON':
+                        // 暂停/停止任务时，保存进度并返回后台
+                        saveDungeonProgress();
+                        console.log('⏸️ [副本] 任务暂停，返回后台');
+                        window.location.href = 'index.html';
+                        break;
+                }
+                
+                // 不删除信号，让后台也能处理
+                
+            } catch(e) {
+                console.error('[信号解析错误]', e);
+            }
+        }
+        
+        // 保存副本进度（在返回后台前调用）
+        function saveDungeonProgress() {
+            // 保存当前游戏状态
+            SharedData.currentDungeon = gameState.currentDungeon;
+            if (typeof saveSharedData === 'function') {
+                saveSharedData();
+            }
+        }
+        
+        function checkInitialPauseState() {
+            // 检查 SharedData 中的副本模式状态
+            // 如果现实锚点不在运行，不做任何处理（由index.html负责状态管理）
+        }
+        
+
+        function loadDungeonData(dungeonId) {
+            // 从 DUNGEON_STORIES 获取数据
+            const data = DUNGEON_STORIES[dungeonId];
+
+            if (!data) {
+                console.error('❌ 剧本数据不存在:', dungeonId);
+                document.getElementById('storyContainer').innerHTML =
+                    '<div style="text-align: center; color: #e74c3c;">无法加载剧本数据：副本不存在</div>';
+                return;
+            }
+
+            gameState.dungeonData = data;
+
+            if (data.storyMD) {
+                const parser = new StoryParser(data.storyMD);
+                gameState.storyFlow = parser.getStoryFlow();
+                gameState.flowIndex = 0;
+                gameState.lineIndex = 0;
+                console.log('✅ MD剧本已加载，流程:', gameState.storyFlow.length, '个段落');
+            }
+
+            showNextLine();
+            gameState.currentLine = 1;
+        }
+
+        function startStoryProgression() {
+            gameState.storyInterval = setInterval(() => {
+                if (gameState.isEnded || gameState.isPaused) return;
+
+                if (gameState.storyFlow) {
+                    playStoryFlow();
+                }
+            }, 3000 / GAME_SPEED);
+        }
+
+        function playStoryFlow() {
+            if (gameState.flowIndex >= gameState.storyFlow.length) {
+                console.log('📖 剧本流程全部播放完毕');
+                return;
+            }
+
+            const currentBlock = gameState.storyFlow[gameState.flowIndex];
+
+            // 处理循环阶段
+            if (currentBlock.type === 'loop') {
+                handleLoopPhase(currentBlock);
+                return;
+            }
+
+            // 处理单条台词
+            if (currentBlock.line) {
+                displayStoryLine(currentBlock.line, currentBlock.type);
+                gameState.flowIndex++;
+                gameState.lineIndex = 0;
+                return;
+            }
+
+            // 处理多行台词块
+            if (currentBlock.lines) {
+                if (gameState.lineIndex < currentBlock.lines.length) {
+                    displayStoryLine(currentBlock.lines[gameState.lineIndex], currentBlock.type);
+                    gameState.lineIndex++;
+                } else {
+                    gameState.flowIndex++;
+                    gameState.lineIndex = 0;
+                }
+            }
+        }
+
+        function handleLoopPhase(loopBlock) {
+            gameState.inLoopPhase = true;
+            
+            // 检查是否满足循环退出条件（不是通关条件！）
+            if (gameState.shouldExitLoop) {
+                console.log('⏭️ 满足循环退出条件，停止循环，继续播放后续台词');
+                gameState.inLoopPhase = false;
+                gameState.flowIndex++;
+                gameState.lineIndex = 0;
+                return;
+            }
+
+            gameState.loopCounter++;
+            
+            // 每5条台词插入一次NPC台词
+            if (gameState.loopCounter % 5 === 0 && loopBlock.npcPool && loopBlock.npcPool.length > 0) {
+                const npcLine = loopBlock.npcPool[Math.floor(Math.random() * loopBlock.npcPool.length)];
+                displayStoryLine(npcLine, 'npc_lover');
+            } else {
+                const randomLine = loopBlock.pool[Math.floor(Math.random() * loopBlock.pool.length)];
+                displayStoryLine(randomLine, 'loop');
+            }
+        }
+
+        function displayStoryLine(text, type = 'normal') {
+            const container = document.getElementById('storyContainer');
+            container.innerHTML = '';
+
+            const lineDiv = document.createElement('div');
+            lineDiv.className = `story-line story-${type}`;
+
+            let prefix = '';
+            if (type === 'npc_lover') {
+                prefix = '[太宰] ';
+            }
+
+            lineDiv.textContent = prefix + text;
+            container.appendChild(lineDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showNextLine() {
+            if (!gameState.dungeonData) return;
+            displayStoryLine('剧本加载中...', 'normal');
+        }
+
+        function updateSanDisplay() {
+            gameState.sanValue = SharedData.san;
+            const percentage = (gameState.sanValue / gameState.sanMax) * 100;
+
+            document.getElementById('sanFill').style.width = percentage + '%';
+            document.getElementById('sanText').textContent = `${gameState.sanValue} / ${gameState.sanMax}`;
+
+            const sanFill = document.getElementById('sanFill');
+            if (gameState.sanValue > 70) {
+                sanFill.style.background = 'linear-gradient(90deg, #2ecc71 0%, #27ae60 100%)';
+            } else if (gameState.sanValue > 40) {
+                sanFill.style.background = 'linear-gradient(90deg, #f39c12 0%, #e67e22 100%)';
+            } else {
+                sanFill.style.background = 'linear-gradient(90deg, #e74c3c 0%, #c0392b 100%)';
+            }
+        }
+
+        function updateDungeonInfo(dungeonId) {
+            // 优先使用 DungeonConfig (如果有), 否则降级使用 DUNGEON_STORIES
+            let dungeon = (typeof DungeonConfig !== 'undefined') ? DungeonConfig[dungeonId] : null;
+            if (!dungeon) dungeon = DUNGEON_STORIES[dungeonId];
+
+            document.getElementById('dungeonTitle').textContent = dungeon.name;
+            document.getElementById('dungeonDifficulty').textContent = '★'.repeat(dungeon.difficulty || 2);
+
+            const conditionsList = document.getElementById('conditionsList');
+            conditionsList.innerHTML = '';
+
+            // 如果没有 clearConditions (因为在纯文本数据里没有)，就造一个假的默认条件，防止报错
+            const clearConditions = dungeon.clearConditions || { '侦查': 2 };
+
+            for (const [skillName, requiredLevel] of Object.entries(clearConditions)) {
+                const currentLevel = SimpleEngine.getSkillLevel(skillName);
+                const isMet = currentLevel >= requiredLevel;
+
+                const item = document.createElement('div');
+                item.className = 'condition-item ' + (isMet ? 'met' : 'not-met');
+                item.innerHTML = `
+                    <span>${skillName}</span>
+                    <span>${currentLevel} / ${requiredLevel}</span>
+                `;
+                conditionsList.appendChild(item);
+            }
+        }
+
+        function updateSkillsUI() {
+            const skillsGrid = document.getElementById('skillsGrid');
+            if (!skillsGrid || skillsGrid.parentElement.classList.contains('hidden')) return;
+
+            skillsGrid.innerHTML = '';
+
+            for (const skillName in SimpleEngine.skills) {
+                const skill = SimpleEngine.skills[skillName];
+                const requiredExp = skill.level * 100;
+                const expPercentage = (skill.experience / requiredExp) * 100;
+                const item = document.createElement('div');
+                item.className = 'skill-item';
+                item.innerHTML = `
+                    <div class="skill-name">${skill.name}</div>
+                    <div class="skill-level">Lv.${skill.level}</div>
+                    <div class="skill-progress-bar">
+                        <div class="skill-progress-fill" style="width: ${expPercentage}%"></div>
+                    </div>
+                    <div class="skill-exp">${skill.experience} / ${requiredExp}</div>
+                `;
+                skillsGrid.appendChild(item);
+            }
+        }
+
+        function startConditionsCheck() {
+            gameState.checkConditionsInterval = setInterval(() => {
+                checkClearConditions();
+            }, 5000 / GAME_SPEED);
+        }
+
+        function checkClearConditions() {
+            if (!gameState.currentDungeon || gameState.isEnded) return;
+
+            let dungeon = (typeof DungeonConfig !== 'undefined') ? DungeonConfig[gameState.currentDungeon] : DUNGEON_STORIES[gameState.currentDungeon];
+            
+            // 容错处理：如果数据源里没有条件，默认给一个
+            const clearConditions = dungeon.clearConditions || { '侦查': 2 };
+            const loopExitConditions = dungeon.loopExitConditions || {};
+
+            // 检测通关条件（任意一个满足即可）
+            let canClear = false;
+            for (const [skillName, requiredLevel] of Object.entries(clearConditions)) {
+                const currentLevel = SimpleEngine.getSkillLevel(skillName);
+                if (currentLevel >= requiredLevel) {
+                    canClear = true;
+                    break;
+                }
+            }
+
+            // 检测循环退出条件（任意一个满足即可）
+            let canExitLoop = false;
+            if (Object.keys(loopExitConditions).length > 0) {
+                for (const [skillName, requiredLevel] of Object.entries(loopExitConditions)) {
+                    const currentLevel = SimpleEngine.getSkillLevel(skillName);
+                    if (currentLevel >= requiredLevel) {
+                        canExitLoop = true;
+                        break;
+                    }
+                }
+            } else {
+                canExitLoop = canClear;
+            }
+
+            updateDungeonInfo(gameState.currentDungeon);
+            gameState.isClearable = canClear;
+            gameState.shouldExitLoop = canExitLoop;
+
+            const completeBtn = document.getElementById('completeBtn');
+            if (canClear) {
+                completeBtn.classList.remove('hidden');
+            } else {
+                completeBtn.classList.add('hidden');
+            }
+        }
+
+        function completeDungeon() {
+            if (!confirm('确定要完成剧本吗？\n\n将获得纪念品和SAN奖励。')) {
+                return;
+            }
+
+            clearInterval(gameState.storyInterval);
+            clearInterval(gameState.checkConditionsInterval);
+            SimpleEngine.stop();
+
+            let dungeon = (typeof DungeonConfig !== 'undefined') ? DungeonConfig[gameState.currentDungeon] : DUNGEON_STORIES[gameState.currentDungeon];
+            
+            // 容错数据
+            const souvenir = dungeon.souvenir || { name: '未知纪念品', buff: '无效果' };
+            const sanReward = dungeon.sanReward || 10;
+
+            if (!SharedData.completedDungeons.includes(gameState.currentDungeon)) {
+                SharedData.completedDungeons.push(gameState.currentDungeon);
+                SharedData.souvenirs.push(souvenir);
+            }
+
+            SharedData.san = Math.min(100, SharedData.san + sanReward);
+            SharedData.currentDungeon = '';
+            if (typeof saveSharedData === 'function') saveSharedData();
+
+            showEndingPanel(souvenir);
+        }
+
+        function showEndingPanel(souvenir) {
+            gameState.isEnded = true;
+
+            document.getElementById('progressHint').style.display = 'none';
+            document.getElementById('actionButtons').style.display = 'none';
+
+            document.getElementById('mementoName').textContent = souvenir.name;
+            document.getElementById('mementoEffect').textContent = souvenir.buff;
+
+            document.getElementById('endingPanel').classList.add('active');
+
+            console.log('🎉 剧本完成，获得纪念品:', souvenir.name);
+        }
+
+        function confirmExit() {
+            if (confirm('确定要退出剧本吗？\n\n⚠️ 中途退出将无法获得任何奖励，SAN值不会恢复。\n\n是否继续？')) {
+                exitDungeonAbandon();
+            }
+        }
+
+        function exitDungeonAbandon() {
+            clearInterval(gameState.storyInterval);
+            clearInterval(gameState.checkConditionsInterval);
+            SimpleEngine.stop();
+
+            SharedData.currentDungeon = '';
+            if (typeof saveSharedData === 'function') saveSharedData();
+
+            // 发送信号给app.html，让任务也暂停
+            const packet = {
+                type: 'DUNGEON_ABANDONED',
+                timestamp: Date.now()
+            };
+            localStorage.setItem('reality_anchor_signal', JSON.stringify(packet));
+            console.log('📡 [副本→现实] 中途退出，通知app.html暂停任务');
+
+            console.log('🚪 中途退出剧本');
+            window.location.href = 'index.html';
+        }
+
+        function returnToBackend() {
+            window.location.href = 'index.html';
+        }
+    </script>
+	
+	<script>
+        const DUNGEON_STORIES = {
+            "mars_casino": {
+                id: "mars_casino",
+                name: "火星赌场",
+                source: "星际牛仔 (Cowboy Bebop)",
+                difficulty: 2,
+                storyMD: `
+【OPENING】
+爵士乐从某个角落流淌出来。你站在一个太空站的赌场门口，霓虹灯把一切染成暧昧的紫红色。
+
+【BRANCH_3】
+随机三选一
+**分支A：** 有人在追一个带着手提箱的男人。据说箱子里装着「某人的过去」，在黑市能卖天价。
+**分支B：** 赌场的庄家在作弊。输光的人会被扔进货舱，没人知道他们去了哪里。
+**分支C：** 后台正在交易非法的「记忆芯片」——从死者大脑里提取的，每一片都是一段人生。
+
+【LOOP_2】
+可循环路线
+
+**🔄 路线1：**
+循环文本池：
+1. 老虎机在闪烁。有人中奖了，周围爆发出欢呼声。
+2. 调酒师擦着杯子，吧台的全息屏播放着赛马回放。
+3. 赌场的音乐换成了更慵懒的萨克斯风独奏。
+4. 筹码碰撞的声音混在人声里，像某种催眠曲。
+5. 一个喝醉的赌徒抱着老虎机哭了起来。
+6. 荷官在洗牌，动作机械而精准。
+7. 有人在角落抽烟，烟雾在霓虹灯下扭曲成奇怪的形状。
+
+【NPC_LOVER_太宰】
+- 「这里的酒比Lupin难喝。调酒师手法太差了，冰块放太多。」
+- （他随手拿起桌上别人的筹码把玩）「要试试手气吗？反正不是我的钱。」
+- 「看那个人。输得只剩内裤了还在押注。人类的执念真可怕。」
+- （盯着老虎机的灯光）「这闪烁的频率……是不是在催眠赌客？啊，已经被催眠了啊我。」
+- 「如果我把这里所有的筹码都推到『00』上，国木田会气到住院吗？」
+
+**🔄 路线2：**
+循环文本池：
+1. 窗外的废弃飞船缓缓旋转，反射着远处行星的光。
+2. 通风管道传来嗡嗡的机械共鸣声。
+3. 货船从外面掠过，引擎的蓝光划破黑暗。
+4. 雷达屏幕上闪烁着不明来源的信号。
+5. 某处传来气密门关闭的沉闷响声。
+6. 飞船残骸的金属在温差下发出咔嚓的声音。
+7. 远处有微弱的求救信号，但没人回应。
+
+【NPC_LOVER_太宰】
+- 「那些飞船残骸……每一艘都有自己的墓志铭吧。可惜太空没有墓碑。」
+- （他趴在舷窗上）「从这里跳出去的话，会在真空里飘多久？三分钟？还是永远？」
+- 「太空比海洋还安静。没有浪花声，也没有国木田的怒吼。真好。」
+- （突然回头看你）「如果我飘走了，你会来捞我吗？……开玩笑的。我又不是垃圾。」
+- 「那个求救信号……已经播了三年了吧。没人去救，也没人关掉它。很有诗意。」
+
+【ENDING】
+随机结局
+**结局A：** 爵士乐还在播放。卷发男人点燃一根烟，看着窗外的星海，眼神很空洞。
+**结局B：** 赌场的霓虹灯开始闪烁，像是在预告什么即将结束。最后一个赌徒离开了座位。
+**结局C：** 有人在走廊尽头说了句「See you, space cowboy」。声音被引擎声淹没了。
+
+【EPILOGUE】
+星海无声。飞船残骸在远处缓缓旋转，反射着太空站的灯光。爵士乐的余韵还在耳边回荡。
+`
+            },
+
+            "cyber_city": {
+                id: "cyber_city",
+                name: "电子脑都市",
+                source: "攻壳机动队 (Ghost in the Shell)",
+                difficulty: 3,
+                storyMD: `
+【OPENING】
+城市的天际线被全息广告填满。你站在某栋大楼的天台，风很大，但感觉不到冷。
+
+【BRANCH_3】
+随机三选一
+**分支A：** 公安九课在追捕一个能侵入电子脑的黑客。他的代号是「傀儡师」，据说他能让人忘记自己是谁。
+**分支B：** 有人的义体突然暴走，攻击了主人。调查显示，所有失控的义体都连接过同一个服务器。
+**分支C：** 黑市在贩卖「定制记忆」——你可以买一段从未发生过的人生，植入大脑后，会相信那是真的。
+
+【LOOP_2】
+可循环路线
+
+**🔄 路线1：**
+循环文本池：
+1. 全息广告在播放政客的演讲，笑容完美得像面具。
+2. 空中巡逻的无人机掠过，扫描着每一张脸。
+3. 对面大楼的窗户里，有人在拆卸自己的义体手臂。
+4. 城市的噪音混成一片，像是电流的低鸣。
+5. 有光学迷彩在附近闪烁，但你看不清是什么。
+6. 天台的边缘有生锈的痕迹，有人在这里跳过。
+7. 电子屏幕在播放天气预报，永远是「多云」。
+
+【NPC_LOVER_太宰】
+- 「把大脑换成硬盘……那里面存的是『我』，还是『我的备份』？」
+- （盯着全息广告）「这个政客的笑容是程序生成的。比我笑得还假。」
+- 「如果把我的记忆格式化，国木田会不会很开心？」
+- （看着义眼的人）「那个人……瞳孔里有扫描线。他看我的时候，是在看『数据』吗？」
+- 「光学迷彩真好啊。可以消失得干干净净。比跳河省事多了。」
+
+**🔄 路线2：**
+循环文本池：
+1. 服务器在运转，散热风扇发出持续的嗡鸣。
+2. 电缆像血管一样布满墙壁，有些在微微发烫。
+3. 终端屏幕在滚动着看不懂的代码。
+4. 空气中有臭氧和机油的味道。
+5. 某个服务器突然重启，指示灯闪了一下。
+6. 地板上有一具空壳的义体，还在微微发热。
+7. 墙上的标语写着「Ghost in the Shell」，已经褪色了。
+
+【NPC_LOVER_太宰】
+- 「这些服务器里存着几百万人的『灵魂』吗？真拥挤。」
+- （踢了一下电缆）「如果我拔掉这根线，会有人突然忘记自己是谁吗？」
+- 「那个空壳义体……它的主人去哪了？升天了？还是变成代码了？」
+- 「傀儡师问我『你是谁』。我也想知道呢。」
+- （盯着终端）「如果我的意识能上传到网络里，就可以同时跳一万次河了。效率很高。」
+
+【ENDING】
+随机结局
+**结局A：** 短发女人关闭了终端。她的义眼闪了一下红光，然后恢复了平静。
+**结局B：** 「傀儡师」的声音消失了。或者说，散布到了整个网络的每一个角落。
+**结局C：** 服务器机房的灯熄灭了。只有指示灯还在闪烁，像无数双眼睛。
+
+【EPILOGUE】
+城市的夜景在脚下延伸。无数的电子信号在建筑间穿梭，像是某种看不见的神经网络。天空没有星星，只有广告的光。
+`
+            },
+
+            "witch_labyrinth": {
+                id: "witch_labyrinth",
+                name: "魔女结界",
+                source: "魔法少女小圆 (Puella Magi Madoka Magica)",
+                difficulty: 3,
+                storyMD: `
+【OPENING】
+色彩是错的。天空是拼贴的糖果纸，地面是剪刀剪出来的波浪线。
+
+【BRANCH_3】
+随机三选一
+**分支A：** 有魔法少女在战斗。她的武器是缎带，动作很利落，但眼神很疲惫，像是打了很久的仗。
+**分支B：** 白色的长耳朵生物在邀请你许愿。它的眼睛没有感情，像是在看「即将签约的商品」。
+**分支C：** 结界深处有一个穿校服的少女。她已经变成了魔女，但还保留着人类的轮廓。
+
+【LOOP_2】
+可循环路线
+
+**🔄 路线1：**
+循环文本池：
+1. 墙壁在呼吸，像是某种巨大生物的内脏。
+2. 空中飘着剪纸般的使魔，跳着诡异的舞蹈。
+3. 地板突然裂开，露出下面的棋盘格。
+4. 远处传来音乐盒的声音，曲调扭曲而刺耳。
+5. 蝴蝶和花朵在腐烂和重生之间循环。
+6. 结界的边缘在融化，像是水彩画泡水了。
+7. 有巨大的眼睛在墙壁上睁开，然后闭上。
+
+【NPC_LOVER_太宰】
+- 「这布景是谁设计的？毕加索喝醉了吗？」
+- （踢开脚边的棉花球）「这种支离破碎的感觉……我的脑子里大概也是这副德行。」
+- 「那个白色的东西（QB）过来了。如果它让你签合同，我就把它绑起来扔进海里。」
+- 「魔女是『绝望的具象化』？真好啊。如果我也能变成那种东西，大概能毁灭半个横滨吧。」
+- （盯着音乐盒）「这曲子……是送葬进行曲的变奏吗？品味不错。」
+
+**🔄 路线2：**
+循环文本池：
+1. 魔法少女的缎带在空中划出弧线。
+2. 使魔被击碎，化成黑色的碎片消散。
+3. 灵魂宝石在闪烁，颜色越来越暗。
+4. 魔女发出不成语言的尖叫。
+5. 地面出现裂痕，有什么东西要从下面钻出来。
+6. 魔法阵在空中展开，然后破碎。
+7. 时间仿佛停顿了一瞬间，然后恢复流动。
+
+【NPC_LOVER_太宰】
+- 「那个少女的眼神……像是已经放弃了什么。和我见过的某些人很像。」
+- （看着灵魂宝石）「原来如此。灵魂被装在石头里……那肉体只是容器吗？真方便。」
+- 「每次打倒魔女，就会掉落『悲叹之种』。这是哪门子的掉落系统？」
+- 「那个白色的家伙说『这是为了对抗熵增』。用少女的绝望拯救宇宙？真是优雅的骗局。」
+- （轻声）「不要许愿。无论它说什么，都不要许愿。」
+
+【ENDING】
+随机结局
+**结局A：** 魔女被击败了。结界崩塌的时候，你看到她变回人形的一瞬间，是个穿校服的少女。
+**结局B：** 金发少女收起了武器。她没有笑，只是看着手里的灵魂宝石，沉默了很久。
+**结局C：** 白色的生物从阴影里走出来，歪着头看你们。它的表情没有变化，像是在等下一个契约。
+
+【EPILOGUE】
+结界消失了。你们回到了普通的街道上。但空气中还残留着某种甜腻的、腐烂的味道。
+`
+            },
+
+            "hinamizawa": {
+                id: "hinamizawa",
+                name: "雏见泽村",
+                source: "寒蝉鸣泣之时 (Higurashi)",
+                difficulty: 3,
+                storyMD: `
+【OPENING】
+蝉鸣震耳欲聋。你站在一个乡村车站，空气又热又湿。
+
+【BRANCH_3】
+随机三选一
+**分支A：** 村子在准备祭典。有人说每年祭典那天，都会有人死去或消失。这是「御社神大人的诅咒」。
+**分支B：** 村民对外来者很警惕。他们说这里有不能问的问题，不能去的地方，不能看的东西。
+**分支C：** 有人在墙上挠出了血痕。有人说他们「又回到这里了」，但没人知道是什么意思。
+
+【LOOP_2】
+可循环路线
+
+**🔄 路线1：**
+循环文本池：
+1. 蝉鸣从未停止，像是在用生命尖叫。
+2. 绿发少女在发传单，笑得很开朗，但眼睛没有在笑。
+3. 神社的台阶上有新鲜的血迹，但没人提起。
+4. 村民在路边低声交谈，看到你就停下了。
+5. 有人在挠墙壁，指甲和墙面摩擦的声音很刺耳。
+6. 便利店老板盯着你看了很久，然后移开了视线。
+7. 远处传来祭典太鼓的声音，沉闷而有节奏。
+
+【NPC_LOVER_太宰】
+- 「蝉叫得太吵了。能不能把这棵树砍了？」
+- 「那个绿发少女……笑得像港口那边的人。那是『杀过人之后试图装作没杀过』的笑容。」
+- （看着血迹）「这血……还是湿的。但没人清理。这村子的清洁习惯真差。」
+- 「村民的眼神……像是在看『即将被献祭的祭品』。我有被盯上的经验，所以很清楚。」
+- （盯着神社）「御社神大人？是克苏鲁系的神明吗？还是本土妖怪？」
+
+**🔄 路线2：**
+循环文本池：
+1. 半夜有人在走廊里拖行什么东西。
+2. 隔壁房间传来挠墙的声音，持续了一整夜。
+3. 窗外有人影站着，一动不动地看着这里。
+4. 祭祀仓库的门开着，里面黑洞洞的。
+5. 有人在念古老的祷词，声音从地下传来。
+6. 棉花从某处飘落，但这里不种棉花。
+7. 电话响了，接起来只有沉重的呼吸声。
+
+【NPC_LOVER_太宰】
+- （盯着走廊）「那个声音……是在拖尸体吗？还是拖家具？希望是后者。」
+- 「隔壁在挠墙。是我的房间吧……我的指甲缝里有血来着。」
+- （看着窗外）「那个人影……站了三小时了。是稻草人？还是真人？要不要去确认一下？」
+- 「这村子的循环……和剧本的循环不一样。这是更古老的、更深层的诅咒。」
+- （平静地）「如果今晚死在这里，记得帮我收尸。不要让国木田来，他会抱怨的。」
+
+【ENDING】
+随机结局
+**结局A：** 祭典结束了。神社后面又找到了尸体。村民的表情很平静，像是见惯了。
+**结局B：** 绿发少女站在车站送你们离开。「明年再来玩吧。」她说，笑容依旧。
+**结局C：** 蝉鸣突然停止了。村子陷入了诡异的安静，只有风吹过稻田的声音。
+
+【EPILOGUE】
+车站的牌子在风中摇晃。回头看，村子被雾气笼罩，像是从未存在过。
+`
+            },
+
+            "innsmouth": {
+                id: "innsmouth",
+                name: "印斯茅斯",
+                source: "克苏鲁神话",
+                difficulty: 3,
+                storyMD: `
+【OPENING】
+海腥味扑面而来。你站在一个破败的港口小镇，所有建筑都向大海的方向倾斜。
+
+【BRANCH_3】
+随机三选一
+**分支A：** 镇上的居民每个月都会去海边进行仪式。有人说他们在召唤「海底的亲族」。
+**分支B：** 镇上有很多「奇怪的居民」——眼睛太大，皮肤太湿润，走路像是不习惯陆地。
+**分支C：** 旅馆墙上挂着奇怪的徽章：章鱼和人鱼交媾的图案。老板说那是「古老信仰的象征」。
+
+【LOOP_2】
+可循环路线
+
+**🔄 路线1：**
+循环文本池：
+1. 居民从你身边经过，眼睛盯着别处，不敢对视。
+2. 鱼市场在卖一些从未见过的鱼，形状很奇怪。
+3. 教堂的钟声很沉闷，像是从水下传来。
+4. 墙上的海报已经褪色，上面写着「回归大海」。
+5. 有人的脖子上有鳃的痕迹，正在用围巾遮掩。
+6. 空气中混合着海腥味和某种腐烂的甜味。
+7. 旅馆老板说话的时候不看你的眼睛。
+
+【NPC_LOVER_太宰】
+- 「好臭。全是海腥味和腐烂的味道。能不能快点结束？」
+- （盯着居民的脖子）「那是鳃吗？……原来如此。退化成鱼就可以在海里永生吗？」
+- 「这里的人走路姿势很奇怪。像是……膝盖弯曲的角度不对。」
+- 「旅馆老板的眼睛……瞳孔是横向的。我记得只有羊和章鱼是这样的。」
+- （捏住鼻子）「我的外套都要腌入味了。回去会被乱步嫌弃的。」
+
+**🔄 路线2：**
+循环文本池：
+1. 涨潮的时候，海里浮出了很多头颅，睁着眼睛看着陆地。
+2. 洞窟的墙上刻着人鱼交媾的图案，还有看不懂的文字。
+3. 祭坛上摆着黄金和珠宝，但没人敢拿。
+4. 海浪拍打岩石，发出像是呼唤的声音。
+5. 有东西在水下游动，偶尔露出背鳍。
+6. 月光照在海面上，波光粼粼，美得诡异。
+7. 空气中有盐分的结晶，闪烁着微弱的光。
+
+【NPC_LOVER_太宰】
+- 「海里那些头……在看我们。不是敌意，是……邀请？」
+- （盯着祭坛）「这些黄金上刻着章鱼的图案。是给『达贡』的贡品吗？」
+- 「如果跳进海里，会被接纳吗？还是会被吃掉？……别拦我，我只是问问。」
+- 「这海浪的声音……像是在说话。你听到了吗？『回来』『回来』『回来』……」
+- （退后一步）「不要应答。答应了就回不去了。」
+
+【ENDING】
+随机结局
+**结局A：** 涨潮了。海里的生物沉回了深处，留下涌动的波纹。
+**结局B：** 旅馆老板站在门口目送你们。他的脖子上，鳃在微微开合。
+**结局C：** 镇子在身后越来越远。雾气升起，遮住了所有的建筑。只有海浪声还在回荡。
+
+【EPILOGUE】
+海风吹动你的衣服。远处的灯塔光在转动。海面上什么都没有，但你知道，海底有东西在注视。
+`
+            },
+
+            "tokyo3": {
+                id: "tokyo3",
+                name: "第三新东京市",
+                source: "新世纪福音战士 (EVA)",
+                difficulty: 4,
+                storyMD: `
+【OPENING】
+警报声撕裂天空。你被告知这是「使徒来袭」。
+
+【BRANCH_3】
+随机三选一
+**分支A：** 沉默的少年被命令进入EVA。他拒绝了，但看到受伤的女孩后，还是坐进了插入栓。
+**分支B：** 地下深处藏着某个秘密。有人说那是「让所有人融为一体」的计划。
+**分支C：** 使徒不是怪物，是「另一种可能性的人类」。NERV在杀死的，是镜子里的自己。
+
+【LOOP_2】
+可循环路线
+
+**🔄 路线1：**
+循环文本池：
+1. 指挥室里，司令戴着反光的眼镜，看不清他的眼睛。
+2. 巨大的EVA站在发射台上，像是被束缚的神明。
+3. LCL的气味弥漫在空气里，温热的，像血。
+4. 电梯在下降，一层又一层，像是坠入地狱。
+5. 墙上的标语：「God's in his heaven, all's right with the world.」
+6. 技术人员在紧张地操作，汗水打湿了制服。
+7. 监控屏幕上，少年的同步率在下降。
+
+【NPC_LOVER_太宰】
+- 「又是让小孩送死的剧本。大人们真会找借口。」
+- （盯着司令）「那个戴眼镜的……和我以前的上司有点像。同类。」
+- 「把孩子塞进机器人里，然后要他们『拯救世界』？真是优雅的绑架。」
+- （看着EVA）「这东西……不是机器。是某种被绑起来的生物吧。」
+- 「LCL的味道……像是羊水。他们把孩子放回子宫里去打仗。真讽刺。」
+
+**🔄 路线2：**
+循环文本池：
+1. 使徒发出不成调的鸣叫，震碎了附近的玻璃。
+2. EVA挥动长刀，切入使徒的AT力场。
+3. 建筑在战斗中倒塌，扬起巨大的尘埃。
+4. 少年在插入栓里尖叫，同步率飙升到危险值。
+5. 使徒的血液喷洒出来，是透明的，像眼泪。
+6. 时间静止了一瞬间，然后EVA暴走了。
+7. 天空裂开，露出黑色的十字架形裂痕。
+
+【NPC_LOVER_太宰】
+- 「那少年的尖叫……和溺水的人很像。在虚无里挣扎。」
+- 「使徒的血是透明的。它在哭吗？还是我们在哭？」
+- （轻声）「如果EVA暴走，会先杀死驾驶员，还是先杀死敌人？」
+- 「那个少年问我，活着有什么意义。我没法回答。因为我也不知道。」
+- （看着天空的裂痕）「世界要结束了吗？……也好。反正都是虚假的舞台。」
+
+【ENDING】
+随机结局
+**结局A：** 使徒被击退了。或者说，用少年的某种代价击退了。插入栓被打开时，他一动不动。
+**结局B：** 司令看着战斗报告，推了推眼镜。「符合预期。」他说。语气里没有任何感情。
+**结局C：** 少年从插入栓里爬出来。他的眼神很空，像是灵魂还留在某个地方。
+
+【EPILOGUE】
+第三新东京市的废墟在夕阳下沉默。远处，EVA被运回了地下。一切都会重复。
+`
+            },
+
+            "fuyuki": {
+                id: "fuyuki",
+                name: "冬木市",
+                source: "Fate/stay night",
+                difficulty: 4,
+                storyMD: `
+【OPENING】
+夜晚的城市，魔力在空气中流动。某处的战斗刚刚结束，空气中残留着血腥味。
+
+【BRANCH_3】
+随机三选一
+**分支A：** 七组御主和从者在互相厮杀。胜者能获得「圣杯」——传说中能实现任何愿望的万能之器。
+**分支B：** 红发少年挡在你们面前。「这里很危险，你们快走。」他的手里握着粗糙的剑，像是随时会碎。
+**分支C：** 圣杯已经被污染了。流出的不是奇迹，是诅咒。但战争还在继续，因为没人愿意承认。
+
+【LOOP_2】
+可循环路线
+
+**🔄 路线1：**
+循环文本池：
+1. 远处传来战斗的余波，魔力的波动震碎了路灯。
+2. 教会的钟声敲响，那是「又有人退场」的信号。
+3. 灵脉的节点在发光，像是城市的伤口。
+4. 有从者在屋顶跳跃，速度快到只能看见残影。
+5. 空气中有血的味道，混合着魔力的焦臭。
+6. 御主的令咒在发光，命令从者去死。
+7. 圣杯的气息在召唤，像是毒品的诱惑。
+
+【NPC_LOVER_太宰】
+- 「为了愿望而杀人的游戏……很人类。很诚实。」
+- （看着令咒）「用三条命令奴役英雄的灵魂？这契约比我们的还恶劣。」
+- 「那个红发少年……眼神像织田作。想拯救所有人，结果谁都救不了。」
+- 「圣杯里流出的是黑泥？……原来如此。所有的愿望都会被扭曲成诅咒吗。」
+- （自言自语）「如果我许愿『让太宰治从未存在过』，会发生什么？」
+
+**🔄 路线2：**
+循环文本池：
+1. 从者的剑刃相撞，火花在夜空中炸开。
+2. 宝具展开，魔力的光芒吞没了整条街道。
+3. 御主躲在掩体后面，手在发抖。
+4. 从者消散了，化成光粒回归座位。
+5. 有人的令咒用尽了，像是烧焦的烙印。
+6. 圣杯的虚影在天空浮现，然后消失。
+7. 胜利者站在废墟上，眼神空洞。
+
+【NPC_LOVER_太宰】
+- 「从者打从者，御主看戏。真是合理的分工。」
+- （看着宝具）「用英雄生前的传说当武器……他们死后还要被利用吗？真惨。」
+- 「那个金色头发的从者（Saber）……她看我的眼神很奇怪。像是在扫描『灵魂的质量』。」
+- 「令咒用完的御主，就会被从者杀掉吗？这契约还挺公平的。」
+- （盯着圣杯）「我的愿望……大概不需要圣杯就能实现。只要一根绳子就够了。」
+
+【ENDING】
+随机结局
+**结局A：** 战斗结束了。断裂的剑插在地上，无名而锈蚀。
+**结局B：** 红发少年目送你们离开。「下次别再卷进来了。」他说。但你知道他自己会继续战斗。
+**结局C：** 教会的神父站在门口，笑得很温和。「愿主保佑你们。」但他的眼神没有温度。
+
+【EPILOGUE】
+冬木市恢复了平静。路灯重新亮起。但在看不见的地方，下一场战争已经在酝酿。
+`
+            },
+
+            "nameless_city": {
+                id: "nameless_city",
+                name: "无名之城",
+                source: "克苏鲁神话",
+                difficulty: 5,
+                storyMD: `
+【OPENING】
+黄沙。无尽的黄沙。地平线上，废墟的轮廓低矮而绵延。
+
+【BRANCH_3】
+随机三选一
+**分支A：** 这座城市存在于人类诞生之前。建筑的门框很低，像是为爬行生物设计的。
+**分支B：** 壁画上描绘着某种文明的兴衰。那些生物没有固定的形态，像是会呼吸的岩石。
+**分支C：** 地下大厅的天花板上有星图，但星星的位置不对。那是几百万年前的天空。
+
+【LOOP_2】
+可循环路线
+
+**🔄 路线1：**
+循环文本池：
+1. 风吹过沙丘，发出低沉的呜咽声。
+2. 建筑的阴影在正午时分扭曲成奇怪的角度。
+3. 墙上的浮雕在移动，或者只是沙子在滑落。
+4. 门框的高度只有一米，你必须弯腰才能通过。
+5. 地上有脚印，但不是人类的，也不是动物的。
+6. 远处有柱子倒塌的声音，沙尘遮天蔽日。
+7. 太阳的颜色不太对，像是透过某种滤镜。
+
+【NPC_LOVER_太宰】
+- 「这个剧本……很古老。比大多数神话都古老。」
+- （盯着门框）「这是给什么生物设计的？蛇？还是……不该有名字的东西？」
+- 「这沙子里混着什么？闻起来有金属味，还有……腐朽的味道。」
+- 「那个脚印……有六个脚趾。不，是七个。还是我数错了？」
+- （轻声）「如果在这里死掉，会被记录在几百万年后的化石里吗？」
+
+**🔄 路线2：**
+循环文本池：
+1. 大厅的天花板有星图，星星排列成看不懂的图案。
+2. 墙上的文字在月光下发出荧光。
+3. 有风从深处吹来，温热的，带着活物的气息。
+4. 地板上有祭坛的痕迹，已经风化了。
+5. 某种震动从骨骼里传来，不是声音，是更原始的东西。
+6. 空气变得粘稠，呼吸困难。
+7. 你感觉到有什么巨大的存在从身边经过。
+
+【NPC_LOVER_太宰】
+- 「天花板的星图……那是地球还没有生命的时候。」
+- （盯着文字）「这些字……不是用来『读』的。是用来『召唤』的。」
+- 「那个风……有呼吸的节奏。这大厅是某种生物的肺吗？」
+- （突然捂住你的眼睛）「别看。」
+- （手在发抖）「刚才有东西经过了。很慢，很慢，像山脉在移动。」
+
+【ENDING】
+随机结局
+**结局A：** 沙漠的边缘，太阳正在下沉。废墟在身后，像是从未被触碰。
+**结局B：** 你们活着回来了。但有些记忆开始模糊，像是被某种力量抹去。
+**结局C：** 太宰盯着自己的手掌，沉默了很久。「我们真的回来了吗？」他问。
+
+【EPILOGUE】
+黄沙无声。那座城市还在那里，等待下一批访客。或者，等待永恒。
+`
+            }
+        };
+    </script>
+</body>
+</html>

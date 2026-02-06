@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无貌之神的演员 - 后台</title>
+    <link rel="stylesheet" href="css/backend.css">
+    <link rel="stylesheet" href="css/adr_real.css">
+    <style>
+        .page-nav {
+            max-width: 1100px;
+            margin: 0 auto 0;
+            padding: 10px 0;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-align: right;
+            border-bottom: 1px dashed #ccc;
+        }
+        .page-nav .nav-current {
+            color: #2c2c2c;
+            margin-right: 20px;
+        }
+        .page-nav .nav-link {
+            color: #999;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .page-nav .nav-link:hover {
+            color: #2c2c2c;
+        }
+
+        /* ===== 时间显示模块 ===== */
+        .time-panel {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 0;
+            font-family: "Courier New", Courier, monospace;
+            border: 1px solid #333;
+            margin-bottom: 10px;
+        }
+        .time-block {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            transition: all 0.5s ease;
+        }
+        .time-block + .time-block {
+            border-left: 1px solid #333;
+        }
+        .time-block-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            color: #999;
+        }
+        .time-block-value {
+            font-size: 22px;
+            letter-spacing: 3px;
+            color: #2c2c2c;
+        }
+        /* 正常态：系统时间亮，副本时间暗 */
+        .time-block.system-time {
+            background: #fff;
+        }
+        .time-block.dungeon-time {
+            background: #f0f0f0;
+        }
+        .time-block.dungeon-time .time-block-label,
+        .time-block.dungeon-time .time-block-value {
+            color: #ccc;
+        }
+        /* 副本中：系统时间黑底，副本时间亮 */
+        .time-block.system-time.in-dungeon {
+            background: #2c2c2c;
+        }
+        .time-block.system-time.in-dungeon .time-block-label {
+            color: #666;
+        }
+        .time-block.system-time.in-dungeon .time-block-value {
+            color: #999;
+        }
+        .time-block.dungeon-time.in-dungeon {
+            background: #fff;
+        }
+        .time-block.dungeon-time.in-dungeon .time-block-label {
+            color: #999;
+        }
+        .time-block.dungeon-time.in-dungeon .time-block-value {
+            color: #2c2c2c;
+        }
+
+        /* ===== 副本进行中遮罩 ===== */
+        .dungeon-active-overlay {
+            display: none;
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 30px 20px;
+            border: 1px dashed #333;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(0,0,0,0.02) 10px,
+                rgba(0,0,0,0.02) 20px
+            );
+            font-family: "Courier New", Courier, monospace;
+        }
+        .dungeon-active-overlay.active {
+            display: block;
+        }
+        .dungeon-active-overlay .overlay-title {
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .dungeon-active-overlay .overlay-dungeon-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c2c2c;
+            margin-bottom: 15px;
+        }
+        .dungeon-active-overlay .overlay-hint {
+            font-size: 11px;
+            color: #999;
+            letter-spacing: 1px;
+        }
+        .dungeon-active-overlay .btn-return-dungeon {
+            margin-top: 15px;
+            padding: 10px 30px;
+            background: #2c2c2c;
+            color: #fff;
+            border: none;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        .dungeon-active-overlay .btn-return-dungeon:hover {
+            background: #000;
+        }
+    </style>
+</head>
+<body class="backend">
+    <nav class="page-nav">
+        <span class="nav-current">● 虚拟端</span>
+        <a href="app.html" class="nav-link">→ 现实端</a>
+    </nav>
+    <div class="backend-container">
+        <div class="backend-header">
+            <h1>无貌之神的演员</h1>
+            <p class="subtitle">世界是一座剧场。帷幕之外，它们在观看。</p>
+        </div>
+
+        <div class="time-panel">
+            <div class="time-block system-time" id="systemTimeBlock">
+                <div class="time-block-label">System Time</div>
+                <div class="time-block-value" id="systemTimeValue">--:--:--</div>
+            </div>
+            <div class="time-block dungeon-time" id="dungeonTimeBlock">
+                <div class="time-block-label">Dungeon Time</div>
+                <div class="time-block-value" id="dungeonTimeValue">00:00:00</div>
+            </div>
+        </div>
+
+        <div class="dungeon-active-overlay" id="dungeonOverlay">
+            <div class="overlay-title">● Dungeon in Progress</div>
+            <div class="overlay-dungeon-name" id="overlayDungeonName">---</div>
+            <div class="overlay-hint">现实端任务进行中，副本正在推进</div>
+            <button class="btn-return-dungeon" onclick="returnToDungeon()">返回副本</button>
+        </div>
+
+        <div class="san-container">
+            <div class="san-label">SAN值</div>
+            <div class="san-bar-container">
+                <div class="san-bar" id="sanBar"></div>
+            </div>
+            <div class="san-value"><span id="sanValue">100</span> / 100</div>
+        </div>
+
+        <div class="location-selector">
+            <h2>当前位置</h2>
+            <div class="location-buttons" id="locationButtons">
+                <button class="location-btn active" data-location="home">安全屋</button>
+                <button class="location-btn" data-location="bar">Lupin酒吧</button>
+                <button class="location-btn" data-location="office">武装侦探社</button>
+                <button class="location-btn" data-location="town">横滨商店街</button>
+                <button class="location-btn" data-location="port">港口</button>
+            </div>
+        </div>
+
+        <div class="text-display">
+            <div class="text-content" id="textContent">加载中...</div>
+            <div class="text-timer">下一次刷新：<span id="textTimer">5</span>秒</div>
+        </div>
+
+        <div class="actions">
+            <h2>选择副本</h2>
+            <div class="dungeon-selection" id="dungeonSelection">
+                </div>
+        </div>
+
+        <div class="souvenirs-section">
+            <h2>已收集的纪念品</h2>
+            <div class="souvenirs-grid" id="souvenirsGrid">
+                </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; border-top: 1px dashed #ccc; padding-top: 20px;">
+            <button class="btn" onclick="window.location.href='collection.html'">📋 查看完整收藏</button>
+        </div>
+    </div>
+
+    <div id="event-popup" class="event-popup" style="display: none;">
+        <h3 id="event-title" class="event-title">事件标题</h3>
+        
+        <div class="event-content">
+            <div id="event-text" class="event-text">事件内容...</div>
+            
+            <div id="event-effect" class="event-effect" style="display:none;"></div>
+        </div>
+
+        <div id="event-choices" class="event-choices"></div>
+
+        <div id="event-actions" class="event-actions">
+            <button id="event-close-btn" onclick="closeEventPopup()" class="btn">继续</button>
+        </div>
+    </div>
+
+    <script src="js/shared.js"></script>
+    <script src="js/backend/main.js"></script>
+</body>
+</html>

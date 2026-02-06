@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无貌之神 - 收藏</title>
+    <link rel="stylesheet" type="text/css" href="css/adr_real.css">
+    <style>
+        .collection-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .collection-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ccc;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-family: "Courier New", monospace;
+            font-size: 13px;
+            color: #666;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: #333;
+            border-bottom-color: #333;
+        }
+
+        .tab-btn:hover {
+            color: #000;
+        }
+
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .collection-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            background: #f9f9f9;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .collection-item:hover {
+            border-color: #333;
+            background: #fff;
+        }
+
+        .collection-item-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            font-family: "Georgia", serif;
+        }
+
+        .collection-item-rarity {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .collection-item-desc {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .back-btn {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .back-btn a {
+            font-family: "Courier New", monospace;
+            color: #333;
+            text-decoration: none;
+            border-bottom: 1px solid #333;
+            padding-bottom: 2px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="collection-container">
+        <h1>收藏</h1>
+
+        <div class="collection-tabs">
+            <button class="tab-btn active" data-tab="souvenirs">纪念品</button>
+            <button class="tab-btn" data-tab="lover-comms">太宰的通信</button>
+            <button class="tab-btn" data-tab="avg-scenes">特殊场景</button>
+        </div>
+
+        <div id="souvenirs-tab" class="tab-content active">
+            <h2>已收集纪念品</h2>
+            <div class="collection-grid" id="souvenirs-grid"></div>
+        </div>
+
+        <div id="lover-comms-tab" class="tab-content">
+            <h2>太宰的通信记录</h2>
+            <div class="collection-grid" id="lover-comms-grid"></div>
+        </div>
+
+        <div id="avg-scenes-tab" class="tab-content">
+            <h2>特殊场景</h2>
+            <div class="collection-grid" id="avg-scenes-grid"></div>
+        </div>
+
+        <div class="back-btn">
+            <a href="index.html">← 返回后台</a>
+        </div>
+    </div>
+
+    <script src="js/shared.js"></script>
+    <script>
+        // 加载共享数据
+        function loadSharedData() {
+            const data = localStorage.getItem('yokohama_shared');
+            if (data) {
+                return JSON.parse(data);
+            }
+            return null;
+        }
+
+        const SharedData = loadSharedData() || {
+            souvenirs: [],
+            loverEvents: {},
+            unlockedAVGScenes: []
+        };
+
+        // 太宰通信数据库
+        const LOVER_COMMUNICATIONS = {
+            message: {
+                level: 'Lv.1',
+                title: '短信',
+                icon: '📱',
+                content: '"我在这一幕的赌局里押了你赢哦。赔率很高，如果输了的话，我会很困扰的——毕竟我的钱包已经在河里冲走了。所以，为了我的晚餐，请务必努力活下来♪"'
+            },
+            call: {
+                level: 'Lv.2',
+                title: '来电',
+                icon: '📞',
+                content: '凌晨 02:14 AM\n"……啊，通了。（背景里有冰块撞击玻璃的声音）\n没什么，只是手指不小心滑到了拨号键。既然醒了，要听笑话吗？\n……哈。你居然没挂断。\n下次来Lupin吧。"'
+            },
+            gift: {
+                level: 'Lv.3',
+                title: '礼物',
+                icon: '🎁',
+                content: '门口出现了一个甚至没有包装的纸袋。\n里面是一盒完全自杀手册（精装版，书角有磨损）和一卷用了一半的绷带。\n"这本送你了。反正我想试的方法都试过了，剩下的都太痛。\n绷带是干净的，虽然看起来不像。"'
+            },
+            visit: {
+                level: 'Lv.4',
+                title: '深夜来访',
+                icon: '🚪',
+                content: '凌晨 01:43，门锁被撬动的声音。你警觉地打开门，发现太宰正熟练地用铁丝撬你安全屋的锁。\n"哟。这锁的结构比港口那边那个剧本里的简单多了。下次记得换个防盗等级高的。"'
+            },
+            letter: {
+                level: 'Lv.5',
+                title: '信件',
+                icon: '💌',
+                content: '你在剧本结束后，口袋里多了一张折得很随意的纸。\n\n致 共犯者：\n以前有人对我说，人是为了救赎自己而活的。\n这话听起来很漂亮，但实行起来太累了。\n我一直在找一个能让我毫无遗憾地退场的时机。这一点没有变。\n但最近，那个时机变得有点模糊了。\n可能是因为我想看看，在这个荒诞剧场的后台，你那张总是很认真的脸，下次会露出什么表情。'
+            }
+        };
+
+        // 显示纪念品
+        function displaySouvenirs() {
+            const grid = document.getElementById('souvenirs-grid');
+            grid.innerHTML = '';
+
+            if (SharedData.souvenirs.length === 0) {
+                grid.innerHTML = '<div class="empty-state">还未收集任何纪念品</div>';
+                return;
+            }
+
+            SharedData.souvenirs.forEach(souvenir => {
+                const item = document.createElement('div');
+                item.className = 'collection-item';
+                item.innerHTML = `
+                    <div class="collection-item-name">${souvenir.name}</div>
+                    <div class="collection-item-rarity">${souvenir.rarity || '普通'}</div>
+                    <div class="collection-item-desc">${souvenir.effect || souvenir.description || '(无描述)'}</div>
+                `;
+                grid.appendChild(item);
+            });
+        }
+
+        // 显示太宰通信
+        function displayLoverCommunications() {
+            const grid = document.getElementById('lover-comms-grid');
+            grid.innerHTML = '';
+
+            const comms = [];
+            Object.keys(LOVER_COMMUNICATIONS).forEach(key => {
+                if (SharedData.loverEvents[key]) {
+                    const comm = LOVER_COMMUNICATIONS[key];
+                    comms.push({ key: key, ...comm });
+                }
+            });
+
+            if (comms.length === 0) {
+                grid.innerHTML = '<div class="empty-state">还未收到任何通信</div>';
+                return;
+            }
+
+            comms.forEach(comm => {
+                const item = document.createElement('div');
+                item.className = 'collection-item';
+                item.innerHTML = `
+                    <div class="collection-item-name">${comm.icon} ${comm.title}</div>
+                    <div class="collection-item-rarity">${comm.level}</div>
+                    <div class="collection-item-desc" style="white-space: pre-wrap;">${comm.content}</div>
+                `;
+                grid.appendChild(item);
+            });
+        }
+
+        // 显示AVG场景
+        function displayAVGScenes() {
+            const grid = document.getElementById('avg-scenes-grid');
+            grid.innerHTML = '';
+
+            if (SharedData.unlockedAVGScenes.length === 0) {
+                grid.innerHTML = '<div class="empty-state">还未解锁特殊场景</div>';
+                return;
+            }
+
+            SharedData.unlockedAVGScenes.forEach(sceneId => {
+                const item = document.createElement('div');
+                item.className = 'collection-item';
+                item.innerHTML = `
+                    <div class="collection-item-name">${sceneId}</div>
+                    <div class="collection-item-desc">[点击查看完整剧情]</div>
+                `;
+                grid.appendChild(item);
+            });
+        }
+
+        // 标签页切换
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 移除所有active
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(t => {
+                    t.style.display = 'none';
+                    t.classList.remove('active');
+                });
+
+                // 添加当前active
+                btn.classList.add('active');
+                const tabId = btn.dataset.tab + '-tab';
+                const tabContent = document.getElementById(tabId);
+                tabContent.style.display = 'block';
+                tabContent.classList.add('active');
+            });
+        });
+
+        // 初始化显示
+        window.addEventListener('load', () => {
+            displaySouvenirs();
+            displayLoverCommunications();
+            displayAVGScenes();
+        });
+    </script>
+</body>
+</html>

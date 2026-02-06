@@ -1,0 +1,341 @@
+/* =========================================================
+PROJECT: 无貌之神 - A Dark Room 深度复刻版 v2.0
+========================================================= */
+
+/* 1. 全局氛围：护眼、纸质感、衬线体 */
+body {
+    background-color: #f3f3f3;
+    color: #333333;
+    font-family: "Georgia", "Times New Roman", serif;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow-x: hidden;
+}
+
+/* 2. 布局核心：把散乱的内容捏在一起 */
+.backend-container, .game-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    display: grid;
+    grid-template-columns: 200px 1fr 200px;
+    gap: 30px;
+    align-items: start;
+}
+
+/* ---------------------------------------------------------
+区域重构：针对 HTML 结构进行"整容"
+--------------------------------------------------------- */
+#story-log, #text-display-area {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    color: #666;
+    border-left: 1px solid #ccc;
+    padding-left: 15px;
+    margin-bottom: 20px;
+    max-height: 300px;
+    overflow-y: hidden;
+}
+
+/* [顶部] 标题与SAN值 */
+h1, h2 {
+    font-weight: normal;
+    text-align: center;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    grid-column: 1 / -1;
+}
+
+/* SAN值条 - 极简线条风 */
+#san-container {
+    width: 60%;
+    margin: 0 auto 40px auto;
+    border: 1px solid #999;
+    height: 10px;
+    padding: 1px;
+    grid-column: 1 / -1;
+}
+
+#san-bar {
+    background: #333;
+    height: 100%;
+    transition: width 0.3s;
+}
+
+/* ---------------------------------------------------------
+组件样式：去卡片化，变按钮列表
+--------------------------------------------------------- */
+.dungeon-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+    grid-column: 2;
+}
+
+.dungeon-card {
+    background: transparent;
+    border: 1px solid transparent;
+    border-bottom: 1px dotted #ccc;
+    padding: 10px 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dungeon-card:hover {
+    background-color: #e8e8e8;
+    border-radius: 4px;
+    padding-left: 15px;
+}
+
+.dungeon-card h3 {
+    font-size: 14px;
+    margin: 0;
+    font-weight: bold;
+    color: #222;
+}
+
+.dungeon-card p {
+    font-size: 12px;
+    color: #888;
+    margin: 0;
+}
+
+/* ---------------------------------------------------------
+按钮：经典的 [ 按钮 ] 风格
+--------------------------------------------------------- */
+.btn {
+    background: transparent;
+    border: 1px solid #bbb;
+    color: #444;
+    padding: 8px 15px;
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 3px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    background: #fff;
+    border-color: #333;
+    color: #000;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.btn:disabled {
+    border-color: #ddd;
+    color: #ccc;
+    cursor: default;
+    background: transparent;
+    box-shadow: none;
+}
+
+/* ---------------------------------------------------------
+[右侧] 存量/技能 (模拟ADR右侧栏)
+--------------------------------------------------------- */
+.souvenir-container, .skills-container {
+    border-left: none;
+    font-size: 12px;
+}
+
+.souvenir-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+    color: #666;
+}
+
+/* ---------------------------------------------------------
+技能栏整容手术 - "数据终端" 风格
+================================================ */
+#skills-container, .skills-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px 30px;
+    padding: 20px 0;
+    margin: 20px 0;
+    border-top: 1px dashed #ccc;
+    border-bottom: 1px dashed #ccc;
+    background: transparent;
+}
+
+.skill-item {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.skill-name {
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.skill-level {
+    font-weight: normal;
+    color: #888;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 3px;
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 0;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: #333;
+    border-radius: 0;
+}
+
+.progress-text {
+    display: none;
+}
+
+.skill-item:hover .progress-text {
+    display: block;
+    font-size: 10px;
+    position: absolute;
+    background: white;
+    border: 1px solid #333;
+    padding: 2px;
+}
+
+/* ---------------------------------------------------------
+剧本框优化
+================================================ */
+#story-display, .story-box {
+    border: none;
+    border-left: 2px solid #333;
+    background: transparent;
+    font-family: "Georgia", serif;
+    font-size: 16px;
+    color: #222;
+    line-height: 1.8;
+    padding: 10px 20px;
+    min-height: 200px;
+}
+
+/* NPC台词样式 */
+.story-npc_lover {
+    color: #8b4513;
+    font-style: italic;
+}
+
+.story-npc_contractor {
+    color: #556b2f;
+    font-style: italic;
+}
+
+/* =======================================================
+   AVG 剧场弹窗样式 (追加)
+   ======================================================= */
+
+/* 1. 弹窗容器：极简白底，去除多余色彩 */
+#event-popup, .event-popup {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90% !important;
+    max-width: 550px !important;
+    z-index: 2000 !important;
+
+    /* 视觉核心：纸质感 */
+    background-color: #fcfcfc !important; /* 极淡的灰白 */
+    border: 1px solid #333 !important;     /* 细黑边框 */
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.1) !important; /* 硬阴影 */
+    border-radius: 0 !important;           /* 拒绝圆角 */
+    padding: 30px !important;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 2. 标题：经典衬线体 */
+.event-title {
+    margin: 0 !important;
+    font-family: "Georgia", serif !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+    color: #000 !important;
+    border-bottom: 1px dashed #999 !important;
+    padding-bottom: 10px !important;
+    text-align: center !important;
+    letter-spacing: 1px !important;
+}
+
+/* 3. 正文内容 */
+.event-text {
+    font-family: "Georgia", serif !important;
+    font-size: 16px !important;
+    line-height: 1.8 !important;
+    color: #333 !important;
+    margin: 10px 0 !important;
+    min-height: 40px;
+    white-space: pre-wrap; /* 保留换行 */
+}
+
+/* 4. 效果/提示框：打字机风格 */
+.event-effect {
+    font-family: "Courier New", monospace !important;
+    font-size: 13px !important;
+    color: #555 !important;
+    background: #eee !important;
+    padding: 8px 12px !important;
+    border-left: 3px solid #333 !important;
+    margin-top: 10px !important;
+}
+
+/* 5. 选项按钮容器 */
+.event-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* 6. 按钮强制覆盖样式 */
+.event-choices .btn, .event-actions .btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent !important;
+    border: 1px solid #ccc !important;
+    color: #333 !important;
+    padding: 12px 15px !important;
+    font-family: "Courier New", monospace !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    border-radius: 0 !important;
+}
+
+.event-choices .btn:hover, .event-actions .btn:hover {
+    background: #333 !important;
+    color: #fff !important;
+    border-color: #333 !important;
+}

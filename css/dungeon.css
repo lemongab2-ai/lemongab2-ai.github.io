@@ -1,0 +1,206 @@
+/* =======================================================
+   无貌之神的演员 - 副本页面 v3.0
+   A Dark Room 风格 - 白底黑字版
+   ======================================================= */
+
+/* =========================================
+1. 副本信息面板（顶部）
+========================================= */
+#dungeonInfoPanel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #f7f7f7;
+    padding: 15px 30px;
+    box-shadow: none;
+    border-bottom: 1px solid #333;
+    z-index: 1000;
+}
+
+.dungeon-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.dungeon-header h2 {
+    margin: 0;
+    color: #2c2c2c;
+    font-size: 1.3em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.exit-btn {
+    background: #fff;
+    color: #2c2c2c;
+    border: 1px solid #333;
+    padding: 8px 20px;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: inherit;
+}
+
+.exit-btn:hover {
+    background: #333;
+    color: #fff;
+}
+
+.dungeon-status {
+    display: flex;
+    gap: 30px;
+    color: #2c2c2c;
+    font-size: 0.9em;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+}
+
+.status-label {
+    color: #666;
+    margin-right: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* =========================================
+2. 通关按钮（右上角）
+========================================= */
+.clear-button {
+    position: fixed;
+    top: 120px;
+    right: 20px;
+    z-index: 999;
+}
+
+.clear-button button {
+    background: #fff;
+    color: #2c2c2c;
+    border: 1px solid #333;
+    padding: 12px 20px;
+    font-size: 0.9em;
+    border-radius: 0;
+    cursor: pointer;
+    box-shadow: none;
+    transition: all 0.2s ease;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.clear-button button:hover {
+    background: #333;
+    color: #fff;
+    transform: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* =========================================
+3. 故事文本显示区域（底部）
+========================================= */
+#storyDisplay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #f7f7f7;
+    padding: 20px 30px;
+    border-top: 1px solid #333;
+    z-index: 999;
+}
+
+.story-content {
+    font-size: 1em;
+    line-height: 1.8;
+    color: #2c2c2c;
+    max-height: 120px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    animation: fadeIn 0.5s ease;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.story-progress {
+    font-size: 0.85em;
+    color: #999;
+    text-align: right;
+}
+
+/* =========================================
+4. 游戏区域（中间）
+========================================= */
+#pk2GameArea {
+    margin-top: 120px;
+    padding: 20px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+5. NPC台词样式
+========================================= */
+.story-line.story-npc_lover {
+    color: #666;
+    font-style: italic;
+    padding-left: 20px;
+    border-left: 2px solid #999;
+}
+
+.story-line.story-npc_contractor {
+    color: #666;
+    font-style: italic;
+    padding-left: 20px;
+    border-left: 2px solid #999;
+}
+
+.story-line.story-ending {
+    font-weight: bold;
+    text-align: center;
+}
+
+.story-line.story-epilogue {
+    color: #666;
+    font-style: italic;
+}
+
+/* =========================================
+6. 响应式设计
+========================================= */
+@media (max-width: 768px) {
+    .dungeon-header h2 {
+        font-size: 1.1em;
+    }
+
+    .dungeon-status {
+        gap: 15px;
+        font-size: 0.8em;
+    }
+
+    #storyDisplay {
+        padding: 15px 20px;
+    }
+
+    .story-content {
+        font-size: 0.9em;
+    }
+
+    .clear-button {
+        top: 100px;
+    }
+}
